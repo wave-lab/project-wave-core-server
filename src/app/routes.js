@@ -2,6 +2,10 @@
 const express = require('express');
 const router = express.Router({mergeParams: true})
 
+//schedule
+router.use('/', require('./controller/scheduler/scheduler'));
+
+//song
 router.use('/', require('./controller/song/song_routes'));
 
 //user
