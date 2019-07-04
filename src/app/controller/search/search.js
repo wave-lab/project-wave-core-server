@@ -6,10 +6,6 @@ const pool = require('../../module/pool');
 
 const song = require('../../model/schema/song');
 
-/**
- * 1. 원곡 아티스트에 키워드 포함 - 아티스트 반환
-@@ -14,40 +15,43 @@ const returnCode = require('../../model/returnCode');
- */
 
 router.get('/', async(req, res, next) => {
 
