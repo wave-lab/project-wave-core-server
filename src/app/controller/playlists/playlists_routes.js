@@ -16,4 +16,7 @@ router.use('/top10', require('./top10List'));
 // //playlist 목록 관리
 // router.use('/', require('./managePlaylist'));
 
+// 곡 상태별 조회
+router.use('/rated', require('./rated'));
+
 module.exports = router;
