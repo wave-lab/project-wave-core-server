@@ -10,8 +10,6 @@ const responseUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 
-const song = require('../../model/schema/song');
-
 const multiUpload = upload.fields([{name : 'uploadSong'}, {name : 'artwork'}]);
 
 router.get('/', async (req, res) => {
