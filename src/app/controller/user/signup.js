@@ -35,7 +35,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
         if(selectUserIdxResult[0]==null){
             console.log('해당 유저 정보 없음');
             res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.NULL_VALUE));
-        }else{
+        }else{ //장르 삽입
             for (i=0; i<bodylen; i++){
                 const userGenreQuery = 'INSERT INTO user_genre (userIdx, genreIdx) VALUES (?,?)';
                 const userGenreResult = await pool.queryParam_Arr(userGenreQuery, [selectedUserIdx, req.body.genre[i]]);
@@ -46,23 +46,23 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                     console.log('장르 삽입 성공');
                 }
             }
+            //선호 아티스트 선택 삽입
+            const userArtistQuery = 'INSERT INTO user_originArtist (userIdx, originArtistIdx) VALUES (?,?)';
+            const userArtistResult = await pool.queryParam_Arr(userArtistQuery, [selectedUserIdx, req.body.originArtistIdx]);
 
             const defaultPlaylistName = ['history','like','rateReady','rated','upload','hits'];
             const defaultPlaylistComment = ["최근 재생곡","좋아요","평가 대기곡","평가한 곡","업로드한 곡","적중 곡"];
             const defaultPlaylistIdx = new Array();
-            //const getUserIdxQuery = 'SELECT FROM user WHERE email = ?';
-            //const signUpUserIdx = await pool.queryParam_Arr(getUserIdxQuery, [req.body.email]);
+            
             for (var i = 0; i < 6; i++) {
                 await playlist.create({
                 playlistName: defaultPlaylistName[i],
                 playlistComment: defaultPlaylistComment[i],
-                userIdx: selectedUserIdx,
-                songList: null
+                userIdx: selectedUserIdx
                 })
             }
             console.log('플레이리스트 목록 생성 완료');
             for(var i = 0 ; i < 6; i++) {
-                //const defaultPlaylistIdx = new Array();
                 defaultPlaylistIdx[i] = (await playlist.find({"userIdx" : selectedUserIdx}))[i]._id;
             }
             console.log('플레이리스트 블록 2 완료');
