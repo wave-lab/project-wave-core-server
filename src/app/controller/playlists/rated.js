@@ -25,6 +25,7 @@ router.get('/:userIdx', async (req, res) => {
     //대기곡 조회
 
     const myPlaylistData = await playlistModules.searchMyPlaylist(userIdx);
+    console.log(myPlaylistData);
     const ratedPlaylistIdx = myPlaylistData.ratedPlaylist;
     const ratedSongsList = (await playlist.find({ "_id": ratedPlaylistIdx }))[0].songList; //array
     const waitSongList = new Array();

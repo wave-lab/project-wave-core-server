@@ -12,17 +12,16 @@ module.exports = {
             else {
                 result = data[0];
             }
-
         })
         return result;
     },
     getSongList: async (playlistIdx) => {
         let result;
-        await playlist.find({ _id: playlistIdx }, async function (err, getSongListResult) {
+        await playlist.find({ _id: playlistIdx }, async function (err, data) {
             if (err) {
                 result = null;
             } else {
-                result = getSongListResult;
+                result = data[0].songList;
             }
         })
         return result;

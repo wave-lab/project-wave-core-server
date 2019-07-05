@@ -16,8 +16,8 @@ router.use('/:userIdx', require('./myPlaylist'));
 //playlist에 담긴 song 추가, 삭제
 // router.use('/:playlist_idx/songs/:songIdx', require('./managePlaylistSongs'));
 
-// playlist 조회
-router.use('/', require('./playlist'));
+// playlist의 곡 조회/추가/삭제
+router.use('/songs', require('./playlist'));
 
 // playlist 추가, 삭제
 router.use('/manage/:playlistIdx', require('./playlistManage'));
