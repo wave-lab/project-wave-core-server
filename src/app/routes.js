@@ -6,7 +6,7 @@ const router = express.Router({mergeParams: true})
 router.use('/', require('./controller/scheduler/scheduler'));
 
 //song
-router.use('/', require('./controller/song/song_routes'));
+router.use('/', require('./controller/songs/songs_routes'));
 
 //user
 router.use('/', require('./controller/user/user_routes'));
