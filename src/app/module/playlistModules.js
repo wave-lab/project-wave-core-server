@@ -31,18 +31,16 @@ module.exports = {
         const songList = (await playlist.find({"_id" : playlistIdx}))[0].songList;
         const addSong = (await song.find({"_id" : songIdx}))[0];
         await songList.push(addSong);
-        await playlist.update({"_id" : playlistIdx}, {$set : {"songList" : songList}});
-        console.log('added');
+        await playlist.updateOne({"_id" : playlistIdx}, {$set : {"songList" : songList}});
     },
     deleteSongFromPlaylist : async (playlistIdx, songIdx) => {
-        const songList = this.getSongList(playlistIdx);
+        const songList = (await playlist.find({"_id" : playlistIdx}))[0].songList;
         for(var i in songList) {
-            if(songList[i].songIdx == songIdx) {
+            if(songList[i]._id == songIdx) {
                 await songList.splice(i,1);
             }
         }
-        await playlist.update({"_id" : playlistIdx}, {$set : {"songList" : songList}});
-        console.log('deleted');
+        await playlist.updateOne({"_id" : playlistIdx}, {$set : {"songList" : songList}}); 
     },
     
 }
