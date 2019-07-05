@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
     }
     else {
         const getSongListResult = await playlistModules.getSongList(inputPlaylistIdx);
-        if(!getSongListResult) {
+        if(getSongListResult == undefined) {
             res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.PLAYLIST_SELECT_FAIL));
         } else {
             res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.PLAYLIST_SELECT_SUCCESS, getSongListResult));                        
@@ -34,7 +34,7 @@ METHOD       : POST
 URL          : /playlists/songs
 BODY         : playlistIdx, songIdx
 */
-router.post('/songs', async(req,res)=>{
+router.post('/', async(req,res)=>{
     const songIdx = req.body.songIdx;
     const playlistIdx = req.body.playlistIdx;   
     if(!songIdx || !playlistIdx) {
@@ -53,7 +53,7 @@ URL          : /playlists/songs
 BODY         : playlistIdx, songIdx
 */
 
-router.delete('/songs', async (req,res)=>{
+router.delete('/', async (req,res)=>{
     const songIdx = req.body.songIdx;
     const playlistIdx = req.body.playlistIdx;
         

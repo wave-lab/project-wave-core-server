@@ -9,7 +9,7 @@ const router = express.Router({mergeParams: true})
 router.use('/songs/:songIdx/likes', require('./likes'));
 
 //곡 업로드
-router.use('/songUpload', require('./songUpload'));
+router.use('/songs/upload', require('./songUpload'));
 
 //아티스트 프로필 조회
 router.use('/artist/:userIdx', require('./artist'));

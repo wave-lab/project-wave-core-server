@@ -22,13 +22,18 @@ router.post('/', multiUpload, async (req, res) => {
     console.log(ID);
     //회원일 경우
     //if (ID > 0) {
+    const body = req.body;
+    const genreNameArray = body.genreName[4].split(',');
+    const moodNameArray = body.moodName[4].split(',');
+
+    if (body.originArtistIdx == null || body.originTitle == null || req.files.uploadSong[0].location == undefined) {
+        console.log(err);
+        res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
+    }
+    else {
         const artworkUrl = req.files.artwork[0].location;
         const uploadSongUrl = req.files.uploadSong[0].location;
-        const body = req.body;
-        const genreNameArray = body.genreName[4].split(',');
-        const moodNameArray = body.moodName[4].split(',');
-
-        await song.create({
+        const inputSongData = {
             originTitle: body.originTitle,
             userIdx: req.body.userIdx,
             streamCount: 0,
@@ -47,16 +52,12 @@ router.post('/', multiUpload, async (req, res) => {
             uploadDate: timeFormat,
             deleteTime: expirationTimeFormat,
             rateUserCount: 0
-        }, async function (err, docs) {
-            if (err) {
-                console.log(err);
-                res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
-            }
-            else {
-                console.log(docs);
-                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
-            }
+        }
+        await song.create(inputSongData, async function (err, docs) {
+            res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
         })
+    }
+
 
     // }
     // //비회원일 경우
