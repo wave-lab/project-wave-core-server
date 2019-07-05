@@ -19,4 +19,6 @@ router.use('/playlists', require('./controller/playlists/playlists_routes'));
 
 router.use('/test', require('./controller/default/default'));
 
+router.use('/', require('./controller/rate/rate_routes'));
+
 module.exports = router;
