@@ -9,38 +9,45 @@ const song = require('../../model/schema/song');
 
 router.get('/', async(req, res, next) => {
 
-    const keyword = req.query.keyword;
-    const QUERY1 = 'SELECT * FROM originArtist WHERE originArtistName LIKE "%' + keyword + '%" limit 10';
-    const QUERY3 = 'SELECT userIdx, nickname, profileImg FROM user WHERE isArtist = 1 AND nickname LIKE "%' + keyword + '%" limit 10';
+    const originArtistName = req.query.originArtistName;
+    const artistName = req.query.artistName;
+    const originTitle = req.query.originTitle;
+
+    const QUERY1 = 'SELECT * FROM originArtist WHERE originArtistName LIKE "%' + originArtistName + '%" limit 10';
+    const QUERY3 = 'SELECT userIdx, nickname, profileImg FROM user WHERE isArtist = 1 AND nickname LIKE "%' + artistName + '%" limit 10';
 
     let result = new Array();
 
-    let result1 = await pool.queryParam_Arr(QUERY1, keyword);
-    let result3 = await pool.queryParam_Arr(QUERY3, keyword);
+    let result1 = await pool.queryParam_None(QUERY1);
+    let result3 = await pool.queryParam_None(QUERY3);
 
-    let query = {
+    let query2 = {
         $or: []
     };
 
-    query.$or.push({
-        originTitle: keyword
+    query2.$or.push({
+        originTitle: { $regex: '.*' + originTitle + '.*' }
     });
 
-    console.log(query);
-
-    song.find(query, async function (err, data) {
+    song.find(query2, async function (err, result2) {
         if (err) {
             return res.status(200).send(responseUtil.successFalse(returnCode.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR"));
         } else {
-            result.push({
-                "원곡 아티스트에 키워드 포함" : result1
-            });
-            result.push({
-                "곡 제목에 키워드 포함" : data
-            });
-            result.push({
-                "커버 아티스트에 키워드 포함" : result3
-            })
+            if(result1.length > 0) {
+                result.push({
+                    "원곡 아티스트에 키워드 포함" : result1
+                });
+            }
+            if(result2.length > 0) {
+                result.push({
+                    "곡 제목에 키워드 포함" : result2
+                });
+            }
+            if(result3.length > 0) {
+                result.push({
+                    "커버 아티스트에 키워드 포함" : result3
+                })
+            }
             return res.status(200).send(responseUtil.successTrue(returnCode.OK, "검색 성공", result));
         }
     }).sort({

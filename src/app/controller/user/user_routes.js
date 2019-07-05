@@ -2,13 +2,10 @@ const express = require('express');
 const router = express.Router({mergeParams: true})
 
 //signup
-router.use('/signup', require('./signup'));
+router.use('/user/signup', require('./signup'));
 
 // signin
-router.use('/signin', require('./signin'));
-
-// //email 인증
-// router.use('/email-verify', require('./email-verify'));
+router.use('/user/signin', require('./signin'));
 
 // // 평가곡 개수
 // router.use('/rate-count', require('./rate-count'));
