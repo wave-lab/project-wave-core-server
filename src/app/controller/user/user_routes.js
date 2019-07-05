@@ -7,6 +7,12 @@ router.use('/user/signup', require('./signup'));
 // signin
 router.use('/user/signin', require('./signin'));
 
+// email 유효성 , 중복 확인
+router.use('/user/email-verify', require('./email-check'));
+
+// nickname 중복 확인
+router.use('/user/nickname-check', require('./nickname-check'));
+
 // // 평가곡 개수
 // router.use('/rate-count', require('./rate-count'));
 
