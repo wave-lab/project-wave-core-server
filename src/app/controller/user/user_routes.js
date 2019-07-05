@@ -16,6 +16,9 @@ router.use('/user/email-check', require('./email-check'));
 // nickname 중복 확인
 router.use('/user/nickname-check', require('./nickname-check'));
 
+// originArtist 추가
+router.use('/user/add-originArtist', require('./add-originArtist'));
+
 // // 평가곡 개수
 // router.use('/rate-count', require('./rate-count'));
 
