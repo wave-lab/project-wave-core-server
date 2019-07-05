@@ -1,7 +1,7 @@
 module.exports = {
-    g1: '발라드',
+    g1: 'Ballad',
     g2: 'POP',
-    g3: '힙합',
-    g4: '락',
-    g5: '댄스'
- }
+    g3: 'Hiphop',
+    g4: 'Rock',
+    g5: 'Dance'
+}
