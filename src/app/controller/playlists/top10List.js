@@ -4,11 +4,11 @@ const router = express.Router({mergeParams: true})
 const resUtil = require('../../module/responseUtil')
 const resCode = require('../../model/returnCode')
 const resMessage = require('../../../config/returnMessage')
+const playlistSelect = require('../../module/playlistSelect') //플레이리스트 조회 모듈
 
 const pool = require('../../module/pool');
 
 const song = require('../../model/schema/song');
-const playlist = require('../../model/schema/playlist');//이렇게 해야 접근 가능
 const top10 = require('../../model/schema/top10');
 
 /*
@@ -28,19 +28,24 @@ router.get('/', async (req, res) => {
             top10.find({top10Name : inputGenreName}, async function(err, top10listResult) {
                 if(err) {
                     console.log(err);
-                    //res.status(200).send(resUtil.successFalse(resCode.NOT_FOUND, resMessage.))
+                    res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.TOP10LIST_SELECT_FAIL));
                 } else { 
-                    console.log(top10listResult[0]);
-                    console.log(top10listResult[0].playlistIdx);
-                    playlist.find({_id : top10listResult[0].playlistIdx}, async function(err, listSelectResult) {
-                        if(err) {
-                            res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.TOP10_SELECT_FAIL));
-                            //console.log(err);
+                    //console.log(top10listResult[0]);
+                    //console.log(top10listResult[0].playlistIdx);
+                    inputPlaylistIdx = top10listResult[0].playlistIdx;
+                    if(!inputPlaylistIdx) {
+                        res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
+                    }
+                    else {
+                        const listSelectResult = await playlistSelect.listSelect(top10listResult[0].playlistIdx); //플레이리스트 조회 모듈 사용
+
+                        if(!listSelectResult) {
+                            res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.PLAYLIST_SELECT_FAIL));
                         } else {
-                            console.log(listSelectResult);
-                            res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.TOP10_SELECT_SUCCESS, listSelectResult));
+                            res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.PLAYLIST_SELECT_SUCCESS, listSelectResult));                        
                         }
-                    })
+
+                    }
                 }
             }).sort({checkTime : -1}).limit(1);
         }
@@ -48,20 +53,29 @@ router.get('/', async (req, res) => {
             top10.find({top10Name : inputMoodName}, async function(err, top10listResult) {
                 if(err) {
                     console.log(err);
+                    res.status(200).send(resUtil.successTrue(resCode.BAD_REQUEST, resMessage.TOP10_SELECT_SUCCESS, listSelectResult));
                 } else { 
-                    console.log(top10listResult[0]);
-                    console.log(top10listResult[0].playlistIdx);
-                    playlist.find({_id : top10listResult[0].playlistIdx}, async function(err, listSelectResult) {
-                        if(err) {
-                            res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.TOP10_SELECT_FAIL));
-                            //console.log(err);
+                    //console.log(top10listResult[0]);
+                    //console.log(top10listResult[0].playlistIdx);
+                    inputPlaylistIdx = top10List10listResult[0].playlistIdx;
+                    if(!inputPlaylistIdx) {
+                        res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
+                    }
+                    else {
+                        const listSelectResult = await playlistSelect.listSelect(top10listResult[0].playlistIdx);
+
+                        if(!listSelectResult) {
+                            res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.PLAYLIST_SELECT_FAIL));
                         } else {
-                            console.log(listSelectResult);
-                            res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.TOP10_SELECT_SUCCESS, listSelectResult));
+                            res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.PLAYLIST_SELECT_SUCCESS, listSelectResult));                        
                         }
-                    })
+
+                    }
                 }
             }).sort({checkTime : -1}).limit(1);
+        }
+        else {
+            res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
         }
     }
 })

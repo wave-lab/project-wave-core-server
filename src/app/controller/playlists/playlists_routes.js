@@ -10,10 +10,16 @@ const router = express.Router({mergeParams: true})
 // //top 10 목록 조회
 router.use('/top10', require('./top10List'));
 
+// myPlaylist 조회
+router.use('/:userIdx', require('./myPlaylist'));
+
 // //playlist에 담긴 song 추가, 삭제
 // router.use('/:playlist_idx/songs/:songIdx', require('./managePlaylistSongs'));
 
-// //playlist 목록 관리
-// router.use('/', require('./managePlaylist'));
+// playlist 조회
+router.use('/:playlistIdx', require('./playlist'));
+
+// playlist 추가, 삭제
+router.use('/manage/:playlistIdx', require('./playlistManage'));
 
 module.exports = router;
