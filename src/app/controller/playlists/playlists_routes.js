@@ -17,12 +17,16 @@ router.use('/:userIdx', require('./myPlaylist'));
 // router.use('/:playlist_idx/songs/:songIdx', require('./managePlaylistSongs'));
 
 // playlist 조회
-router.use('/:playlistIdx', require('./playlist'));
+router.use('/', require('./playlist'));
 
 // playlist 추가, 삭제
 router.use('/manage/:playlistIdx', require('./playlistManage'));
 
 // 곡 상태별 조회
 router.use('/rated', require('./rated'));
+
+//업로드 한 목록 조희
+router.use('/upload', require('./upload'));
+
 
 module.exports = router;

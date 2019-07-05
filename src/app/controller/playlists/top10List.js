@@ -4,17 +4,15 @@ const router = express.Router({mergeParams: true})
 const resUtil = require('../../module/responseUtil')
 const resCode = require('../../model/returnCode')
 const resMessage = require('../../../config/returnMessage')
-const playlistSelect = require('../../module/playlistSelect') //플레이리스트 조회 모듈
+const playlistModules = require('../../module/playlistModules') //플레이리스트 조회 모듈
 
 const pool = require('../../module/pool');
-
-const song = require('../../model/schema/song');
 const top10 = require('../../model/schema/top10');
 
 /*
 TOP30플레이리스트 조회
 METHOD       : GET
-URL          : /playlist/top10?genre = {genreName} or /playlist/top30?mood = {modeName}
+URL          : /playlists/top10?genre = {genreName} or /playlist/top30?mood = {modeName}
 */
 router.get('/', async (req, res) => {
     const inputGenreName = req.query.genre;
@@ -37,7 +35,7 @@ router.get('/', async (req, res) => {
                         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
                     }
                     else {
-                        const listSelectResult = await playlistSelect.listSelect(top10listResult[0].playlistIdx); //플레이리스트 조회 모듈 사용
+                        const listSelectResult = await playlistModules.getSongList(top10listResult[0].playlistIdx)//플레이리스트 조회 모듈 사용
 
                         if(!listSelectResult) {
                             res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.PLAYLIST_SELECT_FAIL));
@@ -62,7 +60,7 @@ router.get('/', async (req, res) => {
                         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
                     }
                     else {
-                        const listSelectResult = await playlistSelect.listSelect(top10listResult[0].playlistIdx);
+                        const listSelectResult = await playlistModules.getSongList(top10listResult[0].playlistIdx)  ;
 
                         if(!listSelectResult) {
                             res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.PLAYLIST_SELECT_FAIL));
