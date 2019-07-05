@@ -1,16 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const moment = require('moment');
-
 const jwt = require('../../module/jwt');
 const upload = require('../../../config/multer');
 const returnCode = require('../../model/returnCode');
 const returnMessage = require('../../../config/returnMessage');
 const responseUtil = require('../../module/responseUtil');
-const pool = require('../../module/pool');
-const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
-const song = require('../../model/schema/song');
-const playlist = require('../../model/schema/playlist');
 const playlistModules = require('../../module/playlistModules');
 
 router.get('/:userIdx', async (req, res) => {
@@ -20,12 +14,14 @@ router.get('/:userIdx', async (req, res) => {
     //회원일 경우
     // if (ID > 0) {
         const myPlaylistData = await playlistModules.searchMyPlaylist(userIdx);
-        console.log(myPlaylistData);
         const uploadPlaylistIdx = myPlaylistData.uploadPlaylist;
-        console.log(uploadPlaylistIdx);
         const uploadSongLists = await playlistModules.getSongList(uploadPlaylistIdx);
-        console.log(uploadSongLists);
-
+        if(!myPlaylistData || !uploadSongLists) {
+            res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.GET_UPLOAD_LIST_FAIL));
+        }
+        else {
+            res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.GET_UPLOAD_LIST_SUCCESS, uploadSongLists));
+        }
         
     // }
     // //비회원일 경우
