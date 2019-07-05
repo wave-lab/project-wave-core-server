@@ -13,16 +13,20 @@ router.use('/top10', require('./top10List'));
 // myPlaylist 조회
 router.use('/:userIdx', require('./myPlaylist'));
 
-// //playlist에 담긴 song 추가, 삭제
+//playlist에 담긴 song 추가, 삭제
 // router.use('/:playlist_idx/songs/:songIdx', require('./managePlaylistSongs'));
 
 // playlist 조회
-router.use('/:playlistIdx', require('./playlist'));
+router.use('/', require('./playlist'));
 
 // playlist 추가, 삭제
 router.use('/manage/:playlistIdx', require('./playlistManage'));
 
 // 곡 상태별 조회
 router.use('/rated', require('./rated'));
+
+//업로드 한 목록 조희
+router.use('/upload', require('./upload'));
+
 
 module.exports = router;
