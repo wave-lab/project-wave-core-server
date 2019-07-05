@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../module/pool.js');
+const pool = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
 const hash = require('../../module/hash.js').key;
 
@@ -10,11 +10,11 @@ router.post('/', async(req, res, next) => {
 
     const fcm_token = req.body.fcm_token;
     
-    const QUERY = 'select * from USER where email = ?';
-    let data = await db.execute2(QUERY, email);
+    const getUserQuery = 'select * from user where email = ?';
+    let data = await pool.queryParam_Arr(getUserQuery, email);
 
-    const updateFcm = 'update USER set fcm_token = ? where email = ?';
-    let fcm = await db.execute3(updateFcm,fcm_token,email);
+    const updateFcm = 'update user set fcm_token = ? where email = ?';
+    let fcm = await pool.queryParam_Arr(updateFcm,[fcm_token,email]);
 
     //아이디가 존재하지 않을 경우
     if (data.length == 0) {
@@ -36,12 +36,6 @@ router.post('/', async(req, res, next) => {
             token: token
         });
     }
-});
-
-//로그인
-router.post('/', async(req, res, next)=>{
-    const email = req.body.email;
-    const password = req.body.password;
 });
 
 module.exports = router;
