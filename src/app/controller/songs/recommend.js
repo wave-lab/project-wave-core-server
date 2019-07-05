@@ -24,8 +24,8 @@ router.get('/', async (req, res) => {
         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
     }
     else {
-        const artistSelectQuery = 'SELECT artistIdx FROM user_artist WHERE userIdx = (?)';
-        const artistSelectResult = await pool.queryParam_Arr(genreSelectQuery, inputUserIdx);
+        const artistSelectQuery = 'SELECT originArtistIdx FROM user_originArtist WHERE userIdx = (?)';
+        const artistSelectResult = await pool.queryParam_Arr(artistSelectQuery, inputUserIdx);
 
         if(!artistSelectResult) {
             res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.ARTIST_SELECT_FAIL));
@@ -34,7 +34,7 @@ router.get('/', async (req, res) => {
             console.log(artistSelectResult);
             console.log(artistSelectResult[0].artistIdx);
             for(let i = 0; i < artistSelectResult.length; i++) {
-                song.find({originArtist : artistSelectResult[i].artistIdx}, async function(err, songResult) {
+                song.find({originArtistIdx : artistSelectResult[i].originArtistIdx}, async function(err, songResult) {
                     if(err) {
                         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.RECOMMEND_SELECT_FAIL));
                     } else {

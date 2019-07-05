@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../module/pool.js');
 const jwt = require('../../module/jwt.js');
-const hash = require('../../module/hash.js');
+const hash = require('../../module/hash.js').key;
 
 router.post('/', async(req, res, next) => {
     const email = req.body.email;
@@ -36,6 +36,12 @@ router.post('/', async(req, res, next) => {
             token: token
         });
     }
+});
+
+//로그인
+router.post('/', async(req, res, next)=>{
+    const email = req.body.email;
+    const password = req.body.password;
 });
 
 module.exports = router;
