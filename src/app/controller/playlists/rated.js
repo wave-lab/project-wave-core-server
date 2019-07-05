@@ -10,7 +10,7 @@ const responseUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 const song = require('../../model/schema/song');
-const myPlaylist = require('../../model/schema/myplaylist');
+//const myPlaylist = require('../../model/schema/myplaylist');
 const playlist = require('../../model/schema/playlist');
 const getMyPlaylist = require('../../module/getMyPlaylist');
 
