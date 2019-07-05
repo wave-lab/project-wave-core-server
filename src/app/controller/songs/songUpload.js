@@ -21,7 +21,7 @@ router.post('/', multiUpload, async (req, res) => {
     const ID = jwt.verify(req.headers.authorization);
     console.log(ID);
     //회원일 경우
-    if (ID > 0) {
+    //if (ID > 0) {
         const artworkUrl = req.files.artwork[0].location;
         const uploadSongUrl = req.files.uploadSong[0].location;
         const body = req.body;
@@ -30,7 +30,7 @@ router.post('/', multiUpload, async (req, res) => {
 
         await song.create({
             originTitle: body.originTitle,
-            userIdx: ID,
+            userIdx: req.body.userIdx,
             streamCount: 0,
             likeCount: 0,
             artwork: artworkUrl,
@@ -58,15 +58,15 @@ router.post('/', multiUpload, async (req, res) => {
             }
         })
 
-    }
-    //비회원일 경우
-    else if (ID == -1) {
-        res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, "NO AUTHORIZATION"));
-    }
-    //토큰 검증 실패
-    else {
-        res.status(200).send(resUtil.successFalse(returnCode.FORBIDDEN, "access denied"));
-    }
+    // }
+    // //비회원일 경우
+    // else if (ID == -1) {
+    //     res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, "NO AUTHORIZATION"));
+    // }
+    // //토큰 검증 실패
+    // else {
+    //     res.status(200).send(resUtil.successFalse(returnCode.FORBIDDEN, "access denied"));
+    // }
 })
 
 
