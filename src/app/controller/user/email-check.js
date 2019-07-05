@@ -12,7 +12,7 @@ const responseUtil = require('../../module/responseUtil');
 const rand = Math.floor(Math.random() * 1000000)+100000;
 
 //유효한 email인지 확인
-router.get('/', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
     const selectEmailQuery = 'SELECT email FROM user WHERE email = ?';
     const selectEmailResult = await pool.queryParam_Arr(selectEmailQuery, req.body.email);
     
@@ -74,7 +74,7 @@ router.get('/', async (req, res, next) => {
 });
 
 //인증번호 확인
-router.get('/authentication', async(req, res, next) =>{
+router.post('/authentication', async(req, res, next) =>{
     const user_rand = String(req.body.code);
     if(user_rand == rand){
         console.log('인증 성공');
