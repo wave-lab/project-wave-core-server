@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router({mergeParams: true})
 
-//signup
+// signup
 router.use('/user/signup', require('./signup'));
 
 // signin
 router.use('/user/signin', require('./signin'));
 
+// kakao signin
+router.use('/user/kakao-login', require('./kakao-login'));
+
 // email 유효성 , 중복 확인
-router.use('/user/email-verify', require('./email-check'));
+router.use('/user/email-check', require('./email-check'));
 
 // nickname 중복 확인
 router.use('/user/nickname-check', require('./nickname-check'));
