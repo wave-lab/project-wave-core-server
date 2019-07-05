@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../../module/pool.js');
-const hash = require('../../../config/hashKey').key;
+const hashKey = require('../../../config/hashKey').key;
+const hash = require('../../module/hash');
 const crypto = require('crypto-promise');
 const upload = require('../../../config/multer');
 
@@ -14,13 +15,13 @@ const myPlaylist = require('../../model/schema/myPlaylist');
 
 //회원가입
 router.post('/', upload.single('profileImg'), async (req, res, next) => {
-    const hashedPw = await crypto.pbkdf2(req.body.password.toString('utf8'), hash, 1000, 32, 'SHA512');
+    const hashedPw = hash.encoding(req.body.password);
     const profileImg = req.file.location;
 
     const signupQuery = 'INSERT INTO user (email, password, nickname, profileImg, comment) VALUES (?, ?, ?, ?, ?)';
     const signupResult = await pool.queryParam_Arr(signupQuery, [req.body.email, hashedPw.toString('base64'), req.body.nickname, profileImg, req.body.comment]);
     
-    if (!signupResult) {
+    if (!signupResult) { //회원가입 실패
         res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SIGNUP_FAIL));
     } else { //쿼리문이 성공했을 때
 
