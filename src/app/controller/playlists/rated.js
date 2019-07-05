@@ -10,16 +10,14 @@ const responseUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 const song = require('../../model/schema/song');
-const myPlaylist = require('../../model/schema/myplaylist');
 const playlist = require('../../model/schema/playlist');
 const getMyPlaylist = require('../../module/getMyPlaylist');
 
 //평가한 곡(rated) 에서 status 별로 조회
 router.get('/:userIdx', async (req, res) => {
     const userIdx = req.params.userIdx;
-    await getMyPlaylist.searchMyPlaylist(userIdx);
-
-
+    const result = await getMyPlaylist.searchMyPlaylist(userIdx);
+    console.log(result);
     // //ID = userIdx
     // //const ID = jwt.verify(req.headers.authorization);
 

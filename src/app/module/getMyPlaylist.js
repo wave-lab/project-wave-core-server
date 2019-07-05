@@ -5,15 +5,17 @@ const returnCode = require('../model/returnCode');
 
 
 module.exports = {
-    searchMyPlaylist : (ID) => {
-        myPlaylist.find({ "userIdx": ID }, async function (err, data) {
+    searchMyPlaylist : async (ID) => {
+        let result;
+        await myPlaylist.find({ "userIdx": ID }, function (err, data) {
             if(err) {
                 console.log(err);
             }
             else {
-                console.log(data);
-                return data;
+                result = data;
             }
+            
         })
+        return result;
     }
 }
