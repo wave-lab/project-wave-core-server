@@ -1,6 +1,6 @@
 module.exports = {
-    OK: 200,
-    CREATED: 201,
+    OK: 200,//GET 성공
+    CREATED: 201,//POST 성공
     NO_CONTENT: 204,
     BAD_REQUEST: 400,
     UNAUTHORIZED: 401,

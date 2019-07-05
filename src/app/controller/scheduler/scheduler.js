@@ -18,7 +18,7 @@ const timeFormat = moment().add(9, 'hours').format('YYYY-MM-DD HH:mm:ss');
 
 
 //1시간마다 해야할 일
-var scheduler = schedule.scheduleJob('0 0 * * * *', function() {
+var everyHour = schedule.scheduleJob('0 0 * * * *', function() {
     //let mNow  = new Date();
     //console.log(mNow);
     console.log('스케쥴러 실행');
@@ -58,5 +58,48 @@ var scheduler = schedule.scheduleJob('0 0 * * * *', function() {
 
     
 })
+
+//자정마다 해야할 일
+/*var everyHour = schedule.scheduleJob('0 0 * * * *', function() {
+    //let mNow  = new Date();
+    //console.log(mNow);
+    console.log('스케쥴러 실행2');
+
+
+    song.find({genreName : ' 힙합'}, async function(err, songResult) {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            //console.log(result);
+            await playlist.create({
+                playlistName : "힙합",
+                playlistComment : "TOP30_힙합장르",
+                songList : songResult,
+            }, async function(err, playlistResult) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log(playlistResult);
+                    await top10.create({
+                        top10Name : playlistResult.playlistName,
+                        checkTime : timeFormat,
+                        playlistIdx : playlistResult._id
+                    }, async function(err, top10listResult) {
+                        if(err) {
+                            console.log(err);
+                        } else {
+                            console.log(top10listResult);
+                        }
+                    })
+                    //console.log(docs);
+                }
+            })
+            //console.log(result);
+        }
+     }).sort({streamCount : -1}).limit(10);
+
+    
+})*/
 
 module.exports = router;
