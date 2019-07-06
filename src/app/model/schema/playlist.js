@@ -2,7 +2,6 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var playlistSchema = new Schema({
-    playlistIdx : String,
     playlistName : String,
     playlistComment : String,
     userIdx : Number,

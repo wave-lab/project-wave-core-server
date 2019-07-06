@@ -2,14 +2,12 @@ let mongoose = require("mongoose");
 let Schema = mongoose.Schema;
 
 let myPlaylistSchema = new Schema({
-    myPlaylistIdx : String,
     userIdx : Number,
     historyPlaylist : String,
     likePlaylist : String,
-    recommendPlaylist : String,
     rateReadyPlaylist : String,
     ratedPlaylist : String,
-    hitPlaylist : String,
+    hitsPlaylist : String,
     uploadPlaylist : String,
     customPlaylist : Array
 },{

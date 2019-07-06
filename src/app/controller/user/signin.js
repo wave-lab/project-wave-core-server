@@ -21,7 +21,8 @@ router.post('/', async(req, res, next) => {
         res.status(200).send(responseUtil.successFalse(statusCode.DB_ERROR, resMessage.NOT_CORRECT_USERINFO));
     } else { //db에 입력받은 id가 존재
         if (password == hash.decoding(selectUserResult[0].password)){ //password 일치
-            const token = jwt.sign(selectUserResult[0].user_idx);
+            console.log(selectUserResult[0].userIdx);
+            const token = jwt.sign(selectUserResult[0].userIdx);
             console.log('비밀번호 일치', token);
             res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.SIGNIN_SUCCESS, token));
         } else { // password 불일치
