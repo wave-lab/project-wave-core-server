@@ -19,6 +19,9 @@ router.use('/user/nickname-check', require('./nickname-check'));
 // originArtist 추가
 router.use('/user/add-originArtist', require('./add-originArtist'));
 
+//mypage 조회
+router.use('/user/mypage', require('./mypage'));
+
 // // 평가곡 개수
 // router.use('/rate-count', require('./rate-count'));
 
