@@ -10,7 +10,7 @@ module.exports = {
             expiresIn : 60 * 60 * 24 * 30 //30 days
         };
         const payload = {
-            user_id : ID
+            userIdx : ID
         };
         let token = jwt.sign(payload, secretKey, options);
         return token;
@@ -22,7 +22,7 @@ module.exports = {
     //에러날 경우 -2 리턴
     verify : function(token) {
         let decoded;
-        let error;
+        let err;
         try {
             decoded = jwt.verify(token, secretKey);
         }
@@ -32,7 +32,7 @@ module.exports = {
         if(!decoded) {
             return -1;
         }else {
-            return decoded.user_id;
+            return decoded.userIdx;
         }
     }
 };

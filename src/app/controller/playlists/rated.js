@@ -14,12 +14,13 @@ const playlist = require('../../model/schema/playlist');
 const playlistModules = require('../../module/playlistModules');
 
 //평가한 곡(rated) 에서 status 별로 조회
-router.get('/:userIdx', async (req, res) => {
+router.get('/', async (req, res) => {
+    console.log("hello");
     const userIdx = req.params.userIdx;
 
     //ID = userIdx
     //const ID = jwt.verify(req.headers.authorization);
-
+    //console.log(ID);
     //회원일 경우
     //if(ID > 0) {
     //대기곡 조회
