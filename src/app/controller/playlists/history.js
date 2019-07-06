@@ -6,7 +6,6 @@ const resCode = require('../../model/returnCode')
 const resMessage = require('../../../config/returnMessage')
 
 const playlistModules = require('../../module/playlistModules') //myPlaylist 조회 모듈
-const playlistSelect = require('../../module/playlistSelect') //플레이리스트 조회 모듈
 
 const pool = require('../../module/pool');
 

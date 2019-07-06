@@ -2,6 +2,9 @@
 const express = require('express');
 const router = express.Router({mergeParams: true})
 
+//playlists
+router.use('/playlists', require('./controller/playlists/playlists_routes'));
+
 //schedule
 router.use('/', require('./controller/scheduler/scheduler'));
 
@@ -14,8 +17,6 @@ router.use('/', require('./controller/user/user_routes'));
 //search
 router.use('/', require('./controller/search/search_routes'));
 
-//playlists
-router.use('/playlists', require('./controller/playlists/playlists_routes'));
 
 router.use('/test', require('./controller/default/default'));
 
