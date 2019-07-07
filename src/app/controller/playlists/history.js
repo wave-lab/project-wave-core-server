@@ -17,7 +17,7 @@ const song = require('../../model/schema/song');
 METHOD       : GET
 URL          : /playlists/default/history/user/:userIdx/songs?songIdx={songIdx}
 PARAMETER    : songIdx = song의 인덱스
-               userIdx = user의 인덱스
+userIdx = user의 인덱스
 */
 
 router.get('/', async (req, res) => {

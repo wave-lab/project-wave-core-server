@@ -6,7 +6,15 @@ const returnMessage = require('../../../config/returnMessage');
 const responseUtil = require('../../module/responseUtil');
 const playlistModules = require('../../module/playlistModules');
 
-router.get('/getHitsSongList', async (req, res) => {
+router.get('/', async (req, res) => {
+    var checkHits = schedule.scheduleJob('0/5 * * * * *', async function() {
+        console.log('적중곡 판별 스케쥴러 실행');
+        const ID = await jwt.verify(req.headers.authorization);
+        const myPlaylistIdx = await playlistModules.searchMyPlaylist(ID);
+        console.log(myPlaylistIdx);
+        const ratedSongs = await playlistModules.getSongList(myPlaylistIdx.ratedPlaylist);
+        console.log(ratedSongs);
+    })
     const ID = await jwt.verify(req.headers.authorization);
     console.log(ID);
     //const userIdx = req.params.userIdx;
