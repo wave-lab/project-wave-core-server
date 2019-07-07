@@ -1,8 +1,8 @@
-var jwt = require('../jwt');
+var jwt = require('../module/jwt');
 
-const resMessage = require('../model/returnMessage');
+const resMessage = require('../../config/returnMessage');
 const statusCode = require('../model/returnCode');
-const util = require('./utils');
+const util = require('./responseUtil');
 
 const authUtil = {
     //middlewares

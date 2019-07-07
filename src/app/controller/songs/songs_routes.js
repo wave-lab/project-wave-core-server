@@ -3,13 +3,13 @@ const express = require('express');
 const router = express.Router({mergeParams: true})
 
 //곡 재생
-router.use('/songs/:songIdx/user/:userIdx', require('./play'));
+//router.use('/songs/:songIdx/user/:userIdx', require('./play'));
 
 //곡 좋아요/좋아요 취소
-router.use('/songs/:songIdx/likes', require('./likes'));
+router.use('/likes/user/:userIdx/songs?songIdx={songIdx}', require('./likes'));
 
 //곡 업로드
-router.use('/songUpload', require('./songUpload'));
+router.use('/songs/upload', require('./songUpload'));
 
 //아티스트 프로필 조회
 router.use('/artist/:userIdx', require('./artist'));

@@ -2,7 +2,6 @@ let mongoose = require("mongoose");
 let Schema = mongoose.Schema;
 
 let songSchema = new Schema({
-    songIdx : String,
     originTitle : String,
     userIdx : Number,
     streamCount : Number,

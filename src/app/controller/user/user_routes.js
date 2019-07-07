@@ -1,11 +1,26 @@
 const express = require('express');
 const router = express.Router({mergeParams: true})
 
-//signup
+// signup
 router.use('/user/signup', require('./signup'));
 
 // signin
 router.use('/user/signin', require('./signin'));
+
+// kakao signin
+router.use('/user/kakao-login', require('./kakao-login'));
+
+// email 유효성 , 중복 확인
+router.use('/user/email-check', require('./email-check'));
+
+// nickname 중복 확인
+router.use('/user/nickname-check', require('./nickname-check'));
+
+// originArtist 추가
+router.use('/user/add-originArtist', require('./add-originArtist'));
+
+//mypage 조회
+router.use('/user/mypage', require('./mypage'));
 
 // // 평가곡 개수
 // router.use('/rate-count', require('./rate-count'));

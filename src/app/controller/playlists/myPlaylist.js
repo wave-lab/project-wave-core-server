@@ -1,13 +1,13 @@
 const express = require('express');
-const router = express.Router({mergeParams: true})
+const router = express.Router();
+const moment = require('moment');
 
-const resUtil = require('../../module/responseUtil')
-const resCode = require('../../model/returnCode')
-const resMessage = require('../../../config/returnMessage')
-
-const pool = require('../../module/pool');
-
-const myPlaylist = require('../../model/schema/myPlaylist');
+const jwt = require('../../module/jwt');
+const upload = require('../../../config/multer');
+const returnCode = require('../../model/returnCode');
+const returnMessage = require('../../../config/returnMessage');
+const responseUtil = require('../../module/responseUtil');
+const playlistModules = require('../../module/playlistModules');
 
 /*
 myPlaylist 조회 (= 아티스트의 플레이리스트 조회)
@@ -16,19 +16,28 @@ URL          : /playlist/:userIdx
 PARAMETER : userIdx = user Index(특정 사용자의 idx)
 */
 router.get('/', async (req, res) => {
-    const inputUserIdx = req.params.userIdx;
+    const ID = jwt.verify(req.headers.authorization);
 
-    if(!inputUserIdx) {
-        res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
+    //회원일 경우
+    if(ID > 0) {
+        const myPlaylist = await playlistModules.searchMyPlaylist(ID);
+        console.log(myPlaylist)
+        const customIdx = myPlaylist.customPlaylist;
+        console.log(customIdx);
+        console.log((await playlistModules.getSongList(customIdx)))
+        const result = {
+            "custom" : (await playlistModules.getSongList(myPlaylist.customPlaylist)),
+            "history" : (await playlistModules.getSongList(myPlaylist.historyPlaylist)),
+            "like" : (await playlistModules.getSongList(myPlaylist.likePlaylist))
+        }
     }
+    //비회원일 경우
+    else if(ID == -1) {
+
+    }
+    //토큰 검증 실패
     else {
-        myPlaylist.find({userIdx : inputUserIdx}, async function(err, myPlaylistResult) {
-            if(err) {
-                res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE));
-            } else {
-                console.log(myPlaylistResult);
-            }
-        })
+        res.status(200).send(responseUtil.successFalse(returnCode.FORBIDDEN, "access denied"));
     }
 })
 
