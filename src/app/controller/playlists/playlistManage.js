@@ -26,14 +26,10 @@ router.post('/', async (req, res) => {
     const inputComment = req.body.playlistComment;
     const inputUserIdx = req.body.userIdx;
 
-    console.log(inputName);
     const playlistSelect = await playlist.find({$and : [{"userIdx" : inputUserIdx}, {"playlistName" : inputName}]});
-    console.log(playlistSelect);
     if(playlistSelect.length != 0) {
-        console.log('플레이리스트 이미 있음');
         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.ALREADY_CUSTOM_PLAYLIST));
     } else {
-        console.log('플레이리스트 만들겠음');
         await playlist.create({
             playlistName : inputName,
             playlistComment : inputComment,
@@ -42,9 +38,7 @@ router.post('/', async (req, res) => {
             if(err) {
                 console.log(err);
             }
-            else {
-                //const songList = (await playlist.find({"_id" : playlistIdx}))[0].songList;
-    
+            else {    
                 const myListResult = (await myPlaylist.find({"userIdx" : inputUserIdx}))[0];
                 const myCustom = myListResult.customPlaylist
                 const addPlaylist = playlistResult._id;
@@ -81,30 +75,17 @@ router.delete('/', async (req, res) => {
         else {
             const getMyPlaylist = (await myPlaylist.find({"userIdx" : inputUserIdx}))[0];
             console.log(getMyPlaylist);
-            //const myListResult = (await myPlaylist.find({"userIdx" : inputUserIdx}))[0];
             const myCustom = getMyPlaylist.customPlaylist
 
             await myCustom.pull(inputPlaylistIdx);
             await myPlaylist.updateOne({"_id" : getMyPlaylist._id}, {$set : {"customPlaylist" : myCustom}});
 
+            await playlist.deleteOne({"_id" : inputPlaylistIdx});
+
             const deleteCustomResult = (await myPlaylist.find({"userIdx" : inputUserIdx}))[0];
             console.log(deleteCustomResult);
             res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.PLAYLIST_DELETE_SUCCESS, deleteCustomResult));
         }
-
-
-        /*await getMyPlaylist.deleteOne({playlistIdx : inputPlaylistIdx}, async function(err, removeResult) {
-            if(err) {
-                res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.PLAYLIST_DELETE_FAIL));
-                console.log(err);
-            } else {
-                
-                const deleteResult = (await myPlaylist.find({"userIdx" : inputUserIdx}))[0];
-                console.log(deleteResult);
-               res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.PLAYLIST_DELETE_SUCCESS, deleteResult));
-                //console.log(docs);
-            }
-        });*/
     }
 });
 
