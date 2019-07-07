@@ -8,6 +8,8 @@ router.use('/playlists', require('./controller/playlists/playlists_routes'));
 //schedule
 router.use('/', require('./controller/scheduler/scheduler'));
 
+router.use('/', require('./controller/scheduler/rateReadyscheduler'));
+
 //평가 대기곡 스케출러
 router.use('/', require('./controller/scheduler/rateReadyscheduler'));
 
@@ -19,7 +21,6 @@ router.use('/', require('./controller/user/user_routes'));
 
 //search
 router.use('/', require('./controller/search/search_routes'));
-
 
 router.use('/test', require('./controller/default/default'));
 

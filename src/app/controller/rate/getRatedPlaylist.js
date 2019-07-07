@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const result1 = await playlistModules.getPlayList(ID, "rated");
-        res.status(200).send(responseUtil.successTrue(returnCode.CREATED, "내가 평가한 곡 플레이리스트", result1));
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "내가 평가한 곡 플레이리스트", result1));
     }
     //비회원일 경우
     else if (ID == -1) {

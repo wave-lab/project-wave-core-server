@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     if (ID > 0) {
         const QUERY1 = 'SELECT rateSongCount FROM user WHERE userIdx = ?';
         let result1 = await pool.queryParam_Arr(QUERY1, ID);
-        res.status(200).send(responseUtil.successTrue(returnCode.CREATED, "평가 곡 조회 성공", result1[0].rateSongCount));
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "평가 곡 조회 성공", result1[0].rateSongCount));
     }
     //비회원일 경우
     else if (ID == -1) {

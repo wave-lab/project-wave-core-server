@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
         const result4 = await song.find(query);
         console.log(result4);
 
-        res.status(200).send(responseUtil.successTrue(returnCode.CREATED, "평가 대기곡 플레이리스트", result4));
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "평가 대기곡 플레이리스트", result4));
     }
     //비회원일 경우
     else if (ID == -1) {

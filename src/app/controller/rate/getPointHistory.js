@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
             }   
         }
 
-        res.status(200).send(responseUtil.successTrue(returnCode.CREATED, "포인트 내역 조회", result1));
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "포인트 내역 조회", result1));
     }
     //비회원일 경우
     else if (ID == -1) {
