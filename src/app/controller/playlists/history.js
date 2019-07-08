@@ -6,7 +6,6 @@ const resCode = require('../../model/returnCode')
 const resMessage = require('../../../config/returnMessage')
 
 const playlistModules = require('../../module/playlistModules') //myPlaylist 조회 모듈
-const playlistSelect = require('../../module/playlistSelect') //플레이리스트 조회 모듈
 
 const pool = require('../../module/pool');
 
@@ -18,7 +17,7 @@ const song = require('../../model/schema/song');
 METHOD       : GET
 URL          : /playlists/default/history/user/:userIdx/songs?songIdx={songIdx}
 PARAMETER    : songIdx = song의 인덱스
-               userIdx = user의 인덱스
+userIdx = user의 인덱스
 */
 
 router.get('/', async (req, res) => {

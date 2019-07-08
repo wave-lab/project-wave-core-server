@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     }
     //비회원일 경우
     else if(ID == -1) {
-
+        res.status(200).send(responseUtil.successFalse(returnCode.FORBIDDEN, "no authorization"));
     }
     //토큰 검증 실패
     else {
