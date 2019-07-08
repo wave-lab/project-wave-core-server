@@ -22,6 +22,12 @@ router.use('/user/add-originArtist', require('./add-originArtist'));
 //mypage 조회
 router.use('/user/mypage', require('./mypage'));
 
+//사용자 평가한 곡 개수
+router.use('/rate-count', require('./getUserRateCount'));
+
+//내 포인트 내역 조회
+router.use('/point-history', require('./getPointHistory'));
+
 // // 평가곡 개수
 // router.use('/rate-count', require('./rate-count'));
 
