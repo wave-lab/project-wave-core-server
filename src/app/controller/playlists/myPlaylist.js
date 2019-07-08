@@ -1,21 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const moment = require('moment');
-
 const jwt = require('../../module/jwt');
-const upload = require('../../../config/multer');
 const returnCode = require('../../model/returnCode');
 const returnMessage = require('../../../config/returnMessage');
 const responseUtil = require('../../module/responseUtil');
 const playlistModules = require('../../module/playlistModules');
 const pool = require('../../module/pool');
 
-/*
-myPlaylist 조회 (= 아티스트의 플레이리스트 조회)
-METHOD       : GET
-URL          : /playlist/:userIdx
-PARAMETER : userIdx = user Index(특정 사용자의 idx)
-*/
+//myPlaylist 조회
 router.get('/', async (req, res) => {
     const ID = jwt.verify(req.headers.authorization);
 
@@ -23,19 +15,17 @@ router.get('/', async (req, res) => {
     if (ID > 0) {
         const myPlaylist = await playlistModules.searchMyPlaylist(ID);
         console.log(myPlaylist)
-        const customIdx = myPlaylist.customPlaylist;
-        console.log(customIdx);
-        console.log((await playlistModules.getSongList(customIdx)))
+        const customArray = myPlaylist.customPlaylist;
         const result = {
-            "custom": (await playlistModules.getSongList(myPlaylist.customPlaylist)),
+            "custom": customArray,
             "history": (await playlistModules.getSongList(myPlaylist.historyPlaylist)),
             "like": (await playlistModules.getSongList(myPlaylist.likePlaylist))
         }
-        console.log(result);
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "myPlaylist 조회 성공", result))
     }
     //비회원일 경우
     else if (ID == -1) {
-
+        res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, "NO AUTHORIZATION"));
     }
     //토큰 검증 실패
     else {
@@ -51,7 +41,7 @@ router.get('/rated', async (req, res) => {
     //console.log(ID);
     //회원일 경우
     if (ID > 0) {
-        const ratedPlaylistIdx = myPlaylistData.ratedPlaylist;
+        const ratedPlaylistIdx = await playlistModules.getPlayList(ID, 'rated');
         const ratedSongsList = await playlistModules.getSongList(ratedPlaylistIdx) //array
         const waitSongList = new Array();
         const passSongList = new Array();
