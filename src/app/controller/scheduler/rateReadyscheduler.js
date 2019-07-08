@@ -14,7 +14,7 @@ const genre = require('../../module/genre');
 
 const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
 
-//12시 마다
+//낮 12시 마다
 
 /**
  * 평가 대기곡 스케줄러

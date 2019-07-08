@@ -16,5 +16,10 @@ router.use('/myPlaylist', require('./myPlaylist'));
 // playlist의 곡 조회/추가/삭제
 router.use('/songs', require('./playlist'));
 
+//평가한 곡 플레이리스트 조회
+router.use('/default/rated', require('./getRatedPlaylist'));
+
+//평가 대기곡 플레이리스트 조회
+router.use('/default/rate-ready', require('./getRateReadyPlaylist'));
 
 module.exports = router;
