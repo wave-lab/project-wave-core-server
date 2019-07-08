@@ -30,25 +30,25 @@ module.exports = {
         const result = (await myPlaylist.find({ userIdx: ID }))[0];
         switch (playlistName) {
             case "history": {
-                return await playlist.find({ _id: result.historyPlaylist });
+                return (await playlist.find({ _id: result.historyPlaylist }))[0];
             }
             case "like": {
-                return await playlist.find({ _id: result.likePlaylist });
+                return (await playlist.find({ _id: result.likePlaylist }))[0];
             }
             case "rateReady": {
-                return await playlist.find({ _id: result.rateReadyPlaylist });
+                return (await playlist.find({ _id: result.rateReadyPlaylist }))[0];
             }
             case "rated": {
-                return await playlist.find({ _id: result.ratedPlaylist });
+                return (await playlist.find({ _id: result.ratedPlaylist }))[0];
             }
             case "upload": {
-                return await playlist.find({ _id: result.uploadPlaylist });
+                return (await playlist.find({ _id: result.uploadPlaylist }))[0];
             }
             case "hits": {
-                return await playlist.find({ _id: result.hitsPlaylist });
+                return (await playlist.find({ _id: result.hitsPlaylist }))[0];
             }
             case "custom": {
-                return await playlist.find({ _id: result.customPlaylist });
+                return (await playlist.find({ _id: result.customPlaylist }))[0];
             }
         }
     }
