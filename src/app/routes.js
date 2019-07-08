@@ -14,6 +14,9 @@ router.use('/', require('./controller/scheduler/hitsScheduler'));
 //평가 대기곡 스케출러
 router.use('/', require('./controller/scheduler/rateReadyscheduler'));
 
+//평가 곡 상태 업데이트 스케쥴러
+router.use('/', require('./controller/scheduler/rateStatusScheduler'));
+
 //song
 router.use('/', require('./controller/songs/songs_routes'));
 
