@@ -19,7 +19,8 @@ let songSchema = new Schema({
     songStatus : Number,
     deleteTime : Date,
     rateUserCount : Number,
-    uploadDate : Date
+    uploadDate : Date,
+    playTime : Date
 },{
     versionKey: false // You should be aware of the outcome after set to false
 });
