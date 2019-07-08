@@ -5,7 +5,7 @@ const moment = require('moment');
 const playlistModules = require('../../module/playlistModules');
 const pool = require('../../module/pool');
 
-schedule.scheduleJob('0 5 12 1/1 * ? *', async function () {
+schedule.scheduleJob('0 5 12 0 * ? *', async function () {
     console.log('적중곡 판별 스케쥴러 실행');
     const getAllUserDataQuery = 'SELECT userIdx, hitSongCount, rateSongCount, totalPoint FROM user'
     const getUserRateScoreQuery = 'SELECT ratePoint, songIdx FROM rate_history WHERE userIdx = ?'
@@ -31,12 +31,12 @@ schedule.scheduleJob('0 5 12 1/1 * ? *', async function () {
                             let average = (parseFloat(ratedSongList[j].rateScore / ratedSongList[j].rateUserCount).toFixed(1));
                             if (Math.abs(average - getUserRateScoreResult[k].ratePoint) <= 0.3) { // 평균 점수-내점수 절댓값 0.3 이하
                                 console.log(userIdx + '번 유저가' + ratedSongList[j]._id + ' 번 노래를 적중!');
-                                await playlistModules.addSongToPlaylist(hitsPlaylistIdx, ratedSongList[j]);
+                                await playlistModules.addSongToPlaylist(hitsPlaylistIdx, ratedSongList[j]); //적중곡 목록에 추가
                                 let newCount = (getAllUserDataResult[i].hitSongCount + 1);
-                                await pool.queryParam_Arr(updateHitSongCountQuery, [newCount, userIdx]);
-                                await pool.queryParam_Arr(addHitPointQuery, [userIdx, songIdx.toString() ,400]);
+                                await pool.queryParam_Arr(updateHitSongCountQuery, [newCount, userIdx]); // 적중곡수 수정
+                                await pool.queryParam_Arr(addHitPointQuery, [userIdx, songIdx.toString() ,400]); //포인트 내역 추가
                                 let newPoint = (getAllUserDataResult[i].totalPoint + 400);
-                                await pool.queryParam_Arr(updateTotalPointQuery, [newPoint, userIdx]);
+                                await pool.queryParam_Arr(updateTotalPointQuery, [newPoint, userIdx]); //총 포인트 수정
                             }
                         }
                     }

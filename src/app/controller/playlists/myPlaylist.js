@@ -110,7 +110,7 @@ router.get('/upload', async (req, res) => {
 })
 
 //적중곡 가져오기
-router.get('/', async (req, res) => {
+router.get('/hits', async (req, res) => {
     const ID = await jwt.verify(req.headers.authorization);
     console.log(ID);
     //const userIdx = req.params.userIdx;
@@ -118,6 +118,16 @@ router.get('/', async (req, res) => {
     if (ID > 0) {
         const hitsPlaylistIdx = await playlistModules.getPlayList(ID, 'hits');
         const hitsSongList = await playlistModules.getSongList(hitsPlaylistIdx);
+        const getMyRateQuery = 'SELECT ratePoint FROM rate_history WHERE userIdx =? AND songIdx = ?';
+        let average = new Array();
+        let myRate = new Array();
+        for(var i = 0 ; i < hitsSongList.length ; i++) {
+            average[i] = (parseFloat(hitsSongList[i].rateScore / hitsSongList[i].rateUserCount).toFixed(1));
+            hitsSongList[i].averageRate = average[i];
+            let songIdx = hitsSongList[i]._id
+            myRate[i] = (await pool.queryParam_Arr(getMyRateQuery, [ID, songIdx.toString()]))[0].ratePoint;
+            hitsSongList[i].myRate = myRate[i];
+        }
         console.log(hitsSongList);
         if(!hitsPlaylistIdx) {
             res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.GET_HITS_LIST_FAIL));

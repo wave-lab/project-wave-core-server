@@ -11,13 +11,13 @@ router.get('/', async (req, res) => {
 
     //ID = userIdx
     let ID = jwt.verify(req.headers.authorization);
-    ID = 1;
 
     //회원일 경우
     if (ID > 0) {
-        const QUERY1 = 'SELECT rateSongCount FROM user WHERE userIdx = ?';
+        const QUERY1 = 'SELECT rateSongCount, hitSongCount FROM user WHERE userIdx = ?';
         let result1 = await pool.queryParam_Arr(QUERY1, ID);
-        res.status(200).send(responseUtil.successTrue(returnCode.OK, "평가 곡 조회 성공", result1[0].rateSongCount));
+        console.log(result1);
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "평가 곡수, 적중 곡수 조회 성공", result1[0]));
     }
     //비회원일 경우
     else if (ID == -1) {
