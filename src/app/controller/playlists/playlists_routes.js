@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router({mergeParams: true})
 
 //기본history에 곡 추가
-//router.use('/default/history/user/:userIdx/songs?songIdx={songIdx}', require('./history'));
+router.use('/default/history', require('./history')); 
+
+//기본 history 조회
+router.use('/default/history/user/:userIdx', require('./history'));
 
 // playlist 추가/삭제
 router.use('/manage', require('./playlistManage'));

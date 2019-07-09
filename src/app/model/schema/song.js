@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 let songSchema = new Schema({
     originTitle : String,
     userIdx : Number,
-    streamCount : Number,
+    totalStreamCount : Number,
     likeCount : Number,
     artwork : String,
     originArtistIdx : Number,
@@ -19,7 +19,7 @@ let songSchema = new Schema({
     songStatus : Number,
     deleteTime : Date,
     rateUserCount : Number,
-    uploadDate : Date
+    uploadDate : Date,
 },{
     versionKey: false // You should be aware of the outcome after set to false
 });
