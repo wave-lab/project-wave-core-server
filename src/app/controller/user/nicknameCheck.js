@@ -9,7 +9,7 @@ const responseUtil = require('../../module/responseUtil');
 //nickname 중복 체크
 router.get('/', async (req, res, next) => {
     const selectNicknameQuery = 'SELECT nickname FROM user WHERE nickname = ?';
-    const selectNicknameResult = await pool.queryParam_Arr(selectNicknameQuery, req.body.nickname);
+    const selectNicknameResult = await pool.queryParam_Arr(selectNicknameQuery, [req.query.nickname]);
     
     if(selectNicknameResult[0] == null){ // 닉네임 중복이 없을 때
         console.log('닉네임 사용 가능');

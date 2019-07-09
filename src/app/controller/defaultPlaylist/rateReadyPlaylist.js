@@ -23,7 +23,6 @@ router.get('/', async (req, res) => {
 
     //ID = userIdx
     let ID = jwt.verify(req.headers.authorization);
-    ID = 74;
 
     //회원일 경우
     if (ID > 0) {
