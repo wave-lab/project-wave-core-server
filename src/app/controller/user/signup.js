@@ -79,8 +79,8 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         }
                     }
                     const defaultPlaylistIdx = [];
-                    const defaultPlaylistName = ['history', 'like', 'rateReady', 'rated', 'upload', 'hits'];
-                    const defaultPlaylistComment = ["최근 재생곡", "좋아요", "평가대기곡", "평가한곡", "업로드한곡", "적중곡"];
+                    const defaultPlaylistName = ['like', 'rateReady', 'rated', 'upload', 'hits'];
+                    const defaultPlaylistComment = ["좋아요", "평가대기곡", "평가한곡", "업로드한곡", "적중곡"];
                     //const signUpUserIdx = await pool.queryParam_Arr(getUserIdxQuery, [req.body.email]);
                     
                     for (var i = 0; i < 6; i++) {

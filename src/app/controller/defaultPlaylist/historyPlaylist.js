@@ -55,8 +55,7 @@ router.post('/', async (req, res) => {
                 await history.updateOne({$and : [{"userIdx" : inputUserIdx}, {"songIdx" : inputSongIdx}]}, {$set : {"playCount" : historyResult[0].playCount + 1}});
                 await history.updateOne({$and : [{"userIdx" : inputUserIdx}, {"songIdx" : inputSongIdx}]}, {$set : {"playTime" : timeFormat}});
                 
-                const updateResult = await history.find({$and : [{"userIdx" : inputUserIdx}, {"songIdx" : inputSongIdx}]});
-                res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.CUSTOM_CREATE_SUCCESS, updateResult));
+                res.status(200).send(resUtil.successTrue(resCode.CREATED, resMessage.CUSTOM_CREATE_SUCCESS));
             }
             
         }
@@ -77,6 +76,7 @@ router.get('/', async (req, res) => {
     }
     else {
         const historySelect = await history.find({userIdx : inputUserIdx}).sort({playTime : -1}).limit(100);
+        console.log(historySelect[0]);
         res.status(200).send(resUtil.successTrue(resCode.BAD_REQUEST, resMessage.OUT_OF_VALUE, historySelect));
     }
 })

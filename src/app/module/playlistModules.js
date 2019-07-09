@@ -29,9 +29,6 @@ module.exports = {
     getPlayList: async (ID, playlistName) => {
         const result = (await myPlaylist.find({ userIdx: ID }))[0];
         switch (playlistName) {
-            case "history": {
-                return (await playlist.find({ _id: result.historyPlaylist }))[0];
-            }
             case "like": {
                 return (await playlist.find({ _id: result.likePlaylist }))[0];
             }

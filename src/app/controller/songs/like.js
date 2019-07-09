@@ -16,7 +16,7 @@ const playlist = require('../../model/schema/playlist');
 /*
 곡 좋아요 => 좋아요 플레이리스트에 곡 추가하기
 METHOD       : POST
-URL          : /likes
+URL          : /songs/likes
 BODY         : songIdx = song의 인덱스
                userIdx = user의 인덱스
 */
@@ -44,9 +44,9 @@ router.post('/', async(req, res) => {
     
                     if(!likeInsertResult) { //좋아요 실패
                         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.FAIL_LIKE_SONGS));
-                    } else { //좋아요 성공 => (여기서부터 에러)좋아요 리스트에 추가 => song 테이블에서 해당 곡 좋아요 수 +1 해주기
+                    } else {
                         const songInfo = await song.find({"_id" : inputSongIdx});
-                        await song.updateOne({$and : [{"_id" : inputSongIdx}]}, {$set : {"likeCount" : songInfo[0].likeCount + 1}});
+                        await song.updateOne({"_id" : inputSongIdx}, {$set : {"likeCount" : songInfo[0].likeCount + 1}});
 
                         const myLikedList = (await playlistModules.getPlayList(inputUserIdx, 'like'))[0];
                         const songList = myLikedList.songList
@@ -56,10 +56,9 @@ router.post('/', async(req, res) => {
 
                         await playlist.updateOne({ _id: myLikedList._id }, { $set: { songList: songList } }, async function(err, updateResult){
                             if(err) {
-                                res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.HISTORY_INSERT_FAIL));
+                                res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.FAIL_LIKE_SONGS));
                             } else {
-                                const addLikedResult = await playlistModules.getPlayList(inputUserIdx, 'like');
-                                res.status(200).send(resUtil.successTrue(resCode.OK, resMessage.HISTORY_INSERT_SUCCESS, addLikedResult));
+                                res.status(200).send(resUtil.successTrue(resCode.NO_CONTENT, resMessage.LIKE_SONGS));
                             }
                         });
                     }
@@ -104,7 +103,7 @@ router.delete('/', async(req, res) => {
                         res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.FAIL_LIKE_SONGS));
                     } else { 
                         const songInfo = await song.find({"_id" : inputSongIdx});
-                        await song.updateOne({$and : [{"_id" : inputSongIdx}]}, {$set : {"likeCount" : songInfo[0].likeCount - 1}});
+                        await song.updateOne({"_id" : inputSongIdx}, {$set : {"likeCount" : songInfo[0].likeCount - 1}});
 
                         const myLikedList = (await playlistModules.getPlayList(inputUserIdx, 'like'))[0];
                         inputPlaylistIdx = myLikedList._id
@@ -117,10 +116,9 @@ router.delete('/', async(req, res) => {
                         }
                         await playlist.updateOne({ _id: inputPlaylistIdx }, { $set: { songList: songList } }, async function(err, deleteSongResult){
                             if(err) {
-                                res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.LIKE_PLAYLIST_DELETE_FAIL));
+                                res.status(200).send(resUtil.successFalse(resCode.BAD_REQUEST, resMessage.FAIL_UNLIKE_SONGS));
                             } else {
-                                const myLikePlaylist = await playlistModules.getPlayList(inputUserIdx, 'like');
-                                res.status(200).send(resUtil.successTrue(resCode.BAD_REQUEST, resMessage.LIKE_PLAYLIST_DELETE_SUCCESS, myLikePlaylist));
+                                res.status(200).send(resUtil.successTrue(resCode.NO_CONTENT, resMessage.UNLIKE_SONGS));
                             }
                         });
                         //const deleteSongResult = await playlistModules.deleteSongFromPlaylist(inputPlaylistIdx, inputSongIdx);
