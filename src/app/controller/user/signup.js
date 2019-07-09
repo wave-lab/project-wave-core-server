@@ -51,7 +51,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userGenreResult = await pool.queryParam_Arr(userGenreQuery, [selectedUserIdx, req.body.genre[i]]);
                         if (!userGenreResult) {
                             console.log('장르 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.GENRE_INSERT_FAIL));
                         } else { // 장르 삽입 성공
                             console.log('장르 삽입 성공');
                         }
@@ -62,7 +62,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userMoodResult = await pool.queryParam_Arr(userMoodQuery, [selectedUserIdx, req.body.mood[i]]);
                         if (!userMoodResult) {
                             console.log('무드 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.MOOD_INSERT_FAIL));
                         } else { // 장르 삽입 성공
                             console.log('무드 삽입 성공');
                         }
@@ -73,7 +73,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userArtistResult = await pool.queryParam_Arr(userArtistQuery, [selectedUserIdx, req.body.originArtist[i]]);
                         if (!userArtistResult) {
                             console.log('아티스트 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.ARTIST_INSERT_FAIL));
                         } else {
                             console.log('아티스트 삽입 성공');
                         }
@@ -83,7 +83,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                     const defaultPlaylistComment = ["좋아요", "평가대기곡", "평가한곡", "업로드한곡", "적중곡"];
                     //const signUpUserIdx = await pool.queryParam_Arr(getUserIdxQuery, [req.body.email]);
                     
-                    for (var i = 0; i < 6; i++) {
+                    for (var i = 0; i < 5; i++) {
                         await playlist.create({
                             playlistName: defaultPlaylistName[i],
                             playlistComment: defaultPlaylistComment[i],
@@ -92,19 +92,18 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                     }
                     console.log('플레이리스트 목록 생성 완료');
 
-                    for (var i = 0; i < 6; i++) {
+                    for (var i = 0; i < 5; i++) {
                         defaultPlaylistIdx[i] = (await playlist.find({ "userIdx": selectedUserIdx }))[i]._id;
                     }
                     console.log('플레이리스트 블록 2 완료');
 
                     await myPlaylist.create({
                         userIdx: selectedUserIdx,
-                        historyPlaylist: defaultPlaylistIdx[0],
-                        likePlaylist: defaultPlaylistIdx[1],
-                        rateReadyPlaylist: defaultPlaylistIdx[2],
-                        ratedPlaylist: defaultPlaylistIdx[3],
-                        uploadPlaylist: defaultPlaylistIdx[4],
-                        hitsPlaylist: defaultPlaylistIdx[5]
+                        likePlaylist: defaultPlaylistIdx[0],
+                        rateReadyPlaylist: defaultPlaylistIdx[1],
+                        ratedPlaylist: defaultPlaylistIdx[2],
+                        uploadPlaylist: defaultPlaylistIdx[3],
+                        hitsPlaylist: defaultPlaylistIdx[4]
                     })
                     console.log('플레이리스트 블록 3 완료');
                     res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.SIGNUP_SUCCESS));
