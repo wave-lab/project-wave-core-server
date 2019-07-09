@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require('../../module/pool.js');
 const nodemailer = require('nodemailer');
 const smtpPool = require('nodemailer-smtp-pool');
+const emailConfig = require('../../../config/emailConfig');
 
 const returnCode = require('../../model/returnCode');
 const returnMessage = require('../../../config/returnMessage');
@@ -19,16 +20,6 @@ router.post('/', async (req, res, next) => {
     if(selectEmailResult[0] == null){
         console.log('이메일 일치 없음');
         
-        const config = {
-            mailer: {
-                service: 'Gmail',
-                host: 'localhost',
-                port: '465',
-                user: 'jinee071732@gmail.com',
-                password: 'k1207417',
-            }
-        };
-        
         const from = 'WAVE';
         const to = req.body.email;
         const subject = 'WAVE 회원가입 인증 메일입니다';
@@ -41,6 +32,7 @@ router.post('/', async (req, res, next) => {
             html
         };
         
+        const config = emailConfig.emailConfig;
         const transporter = nodemailer.createTransport(smtpPool({
             service: config.mailer.service,
             host: config.mailer.host,
@@ -56,12 +48,12 @@ router.post('/', async (req, res, next) => {
             maxMessages: 10,
         }));
     
-        transporter.sendMail(mailOptions, (err, res) => {
+        transporter.sendMail(mailOptions, (err) => {
             if (err) {
-                console.log('failed... => ', err);
+                console.log('메일 전송 실패', err);
                 res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SEND_EMAIL_FAIL));
             } else {
-                console.log('succeed... => ', res);
+                console.log('메일 전송 성공');
                 res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.SEND_EMAIL));
             }
             transporter.close();
