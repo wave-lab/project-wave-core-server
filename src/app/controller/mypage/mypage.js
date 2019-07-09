@@ -3,7 +3,6 @@ const router = express.Router();
 const pool = require('../../module/pool.js');
 const jwt = require('../../module/jwt');
 const playlistModules = require('../../module/playlistModules');
-//const playlist = require('../../model/schema/playlist');
 const upload = require('../../../config/multer');
 
 const returnCode = require('../../model/returnCode');
@@ -14,7 +13,7 @@ const responseUtil = require('../../module/responseUtil');
 router.get('/', async(req, res, next) => { // 마이페이지 조회
     const ID = await jwt.verify(req.headers.authorization);
     console.log(ID);
-
+    
     if(ID > 0) { //회원일 경우
         const selectUserQuery = 'SELECT * FROM user WHERE userIdx = ?';
         const selectUserResult = await pool.queryParam_Arr(selectUserQuery, [ID]);
@@ -25,21 +24,23 @@ router.get('/', async(req, res, next) => { // 마이페이지 조회
         // const userGenre = selectUserGenreResult; // user의 선호 장르 정보
         
         const myPlaylist = await playlistModules.searchMyPlaylist(ID); // 사용자의 플레이리스트 모두 가져옴
-        console.log(myPlaylist)
+        console.log(myPlaylist);
+        console.log(myPlaylist.uploadPlaylist);
 
-        const uploadPlaylistSongs = await playlistModules.getSongList(myPlaylist.uploadPlaylist); // 업로드곡 리스트의 노래들
+        const uploadSongs = await playlistModules.getSongList(myPlaylist.uploadPlaylist); // 업로드곡 리스트의 노래들
+        console.log(uploadSongs);
         const waitSongList = new Array();
         const passSongList = new Array();
         const failSongList = new Array();
-        for(var i = 0 ; i < uploadPlaylistSongs.length ; i++) { // 곡의 상태를 판별하여 곡정보를 담은 배열을 보내줌
-            if(uploadPlaylistSongs[i].songStatus == 0) { // 유보 상태의 곡들
-                waitSongList.push(uploadPlaylistSongs[i]);
+        for(var i = 0 ; i < uploadSongs.length ; i++) { // 곡의 상태를 판별하여 곡정보를 담은 배열을 보내줌
+            if(uploadSongs[i].songStatus == 0) { // 유보 상태의 곡들
+                waitSongList.push(uploadSongs[i]);
             }
-            else if(uploadPlaylistSongs[i].songStatus == 1) { // 패스 상태의 곡들
-                passSongList.push(uploadPlaylistSongs[i]);
+            else if(uploadSongs[i].songStatus == 1) { // 패스 상태의 곡들
+                passSongList.push(uploadSongs[i]);
             }
             else { // 실패 상태의 곡들
-                failSongList.push(uploadPlaylistSongs[i]);
+                failSongList.push(uploadSongs[i]);
             }
         }
         const playlistResult = {

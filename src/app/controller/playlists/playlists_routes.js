@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router({mergeParams: true})
+const router = express.Router({mergeParams: true});
 
 //기본history에 곡 추가
 router.use('/default/history', require('./history')); 
