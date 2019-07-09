@@ -6,7 +6,7 @@ const returnMessage = require('../../../config/returnMessage');
 const responseUtil = require('../../module/responseUtil');
 const playlistModules = require('../../module/playlistModules');
 const pool = require('../../module/pool');
-
+const playlist = require('../../model/schema/playlist');
 //myPlaylist 조회
 router.get('/', async (req, res) => {
     const ID = jwt.verify(req.headers.authorization);
@@ -14,10 +14,22 @@ router.get('/', async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const myPlaylist = await playlistModules.searchMyPlaylist(ID);
-        console.log(myPlaylist)
         const customArray = myPlaylist.customPlaylist;
+        const customArtworksArray = new Array();
+        let songList = new Array();
+        for(var i = 0; i < customArray.length ; i++) {
+            songList[i] = await playlistModules.getSongList(customArray[i]);
+            customArtworksArray[i] = new Array();
+            for(var j = 0; j < 4 ; j++) {
+                customArtworksArray[i][j] =(songList[i][j]).artwork;
+            }
+        }
+        
         const result = {
-            "custom": customArray,
+            "custom": {
+                customArray : customArray,
+                thumbnail : customArtworksArray
+            },
             "history": (await playlistModules.getSongList(myPlaylist.historyPlaylist)),
             "like": (await playlistModules.getSongList(myPlaylist.likePlaylist))
         }
@@ -32,4 +44,6 @@ router.get('/', async (req, res) => {
         res.status(200).send(responseUtil.successFalse(returnCode.FORBIDDEN, "access denied"));
     }
 })
+
+
 module.exports = router;
