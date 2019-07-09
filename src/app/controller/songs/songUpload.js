@@ -21,53 +21,53 @@ router.post('/', multiUpload, async (req, res) => {
     const ID = jwt.verify(req.headers.authorization);
     console.log(ID);
     //회원일 경우
-    //if (ID > 0) {
-    const body = req.body;
-    const genreNameArray = body.genreName[4].split(',');
-    const moodNameArray = body.moodName[4].split(',');
+    if (ID > 0) {
+        const body = req.body;
+        const genreNameArray = body.genreName[4].split(',');
+        const moodNameArray = body.moodName[4].split(',');
 
-    if (body.originArtistIdx == null || body.originTitle == null || req.files.uploadSong[0].location == undefined) {
-        console.log(err);
-        res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
-    }
-    else {
-        const artworkUrl = req.files.artwork[0].location;
-        const uploadSongUrl = req.files.uploadSong[0].location;
-        const inputSongData = {
-            originTitle: body.originTitle,
-            userIdx: req.body.userIdx,
-            streamCount: 0,
-            likeCount: 0,
-            artwork: artworkUrl,
-            originArtistIdx: body.originArtistIdx,
-            enrollTime: null,
-            songUrl: uploadSongUrl,
-            genreName: genreNameArray,
-            moodName: moodNameArray,
-            songComment: body.songComment,
-            reportCount: 0,
-            rateScore: 0,
-            highlightTime: body.highlightTime,
-            songStatus: 0,
-            uploadDate: timeFormat,
-            deleteTime: expirationTimeFormat,
-            rateUserCount: 0
+        if (body.originArtistIdx == null || body.originTitle == null || req.files.uploadSong[0].location == undefined) {
+            console.log(err);
+            res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
         }
-        await song.create(inputSongData, async function (err, docs) {
-            res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
-        })
+        else {
+            const artworkUrl = req.files.artwork[0].location;
+            const uploadSongUrl = req.files.uploadSong[0].location;
+            const inputSongData = {
+                originTitle: body.originTitle,
+                userIdx: ID,
+                streamCount: 0,
+                likeCount: 0,
+                artwork: artworkUrl,
+                originArtistIdx: body.originArtistIdx,
+                enrollTime: null,
+                songUrl: uploadSongUrl,
+                genreName: genreNameArray,
+                moodName: moodNameArray,
+                songComment: body.songComment,
+                reportCount: 0,
+                rateScore: 0,
+                highlightTime: body.highlightTime,
+                songStatus: 0,
+                uploadDate: moment(),
+                deleteTime: moment().add(7, 'days'),
+                rateUserCount: 0
+            }
+            await song.create(inputSongData, async function (err, docs) {
+                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
+            })
+        }
+
+
     }
-
-
-    // }
-    // //비회원일 경우
-    // else if (ID == -1) {
-    //     res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, "NO AUTHORIZATION"));
-    // }
-    // //토큰 검증 실패
-    // else {
-    //     res.status(200).send(resUtil.successFalse(returnCode.FORBIDDEN, "access denied"));
-    // }
+    //비회원일 경우
+    else if (ID == -1) {
+        res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, "NO AUTHORIZATION"));
+    }
+    //토큰 검증 실패
+    else {
+        res.status(200).send(resUtil.successFalse(returnCode.FORBIDDEN, "access denied"));
+    }
 })
 
 

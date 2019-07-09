@@ -13,26 +13,29 @@ const myPlaylist = require('../../model/schema/myPlaylist');
 
 //회원가입
 router.post('/', upload.single('profileImg'), async (req, res, next) => {
-    if (req.body.genre == null) { //장르 값 입력이 없을 때
+
+    if (req.body.genre == null || req.body.mood == null) { //장르 값 또는 분위기 값 입력이 없을 때
         console.log('장르 값 입력 없음');
         res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.NULL_VALUE));
-    } else {
-        if (req.body.originArtist == null) { // 장르 값은 입력이 있고 아티스트는 입력이 없을 때
+    } 
+    else {
+        if (req.body.originArtist == null) { // 장르와 분위기 입력 있고 아티스트 입력이 없을 때
             console.log('선호 아티스트 입력 없음');
             res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.NULL_VALUE));
-        } else { // 장르값, 아티스트 모두 입력이 있을 때
+        } 
+        else { // 장르값, 아티스트 모두 입력이 있을 때
             const hashedPw = hash.encoding(req.body.password);
             const profileImg = req.file.location;
 
-            const signupQuery = 'INSERT INTO user (email, password, nickname, profileImg, comment) VALUES (?, ?, ?, ?, ?)';
-            const signupResult = await pool.queryParam_Arr(signupQuery, [req.body.email, hashedPw.toString('base64'), req.body.nickname, profileImg, req.body.comment]);
+            const signupQuery = 'INSERT INTO user (email, password, nickname, profileImg) VALUES (?, ?, ?, ?)';
+            const signupResult = await pool.queryParam_Arr(signupQuery, [req.body.email, hashedPw.toString('base64'), req.body.nickname, profileImg]);
 
             if (!signupResult) { // 기본정보 저장 실패
                 res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SIGNUP_FAIL));
             } else { //쿼리문이 성공했을 때
-                const genrelen = req.body.genre.length; //선택된 장르의 갯수 구함
-                console.log(genrelen);
-                const artistLen = req.body.originArtist.length;
+                const genreLen = req.body.genre.length; //선택된 장르의 갯수
+                const moodLen = req.body.mood.length; //선택된 분위기의 갯수
+                const artistLen = req.body.originArtist.length; //선택된 분위기의 갯수
 
                 const selectUserIdxQuery = 'SELECT userIdx FROM user WHERE (email = ?)';
                 const selectUserIdxResult = await pool.queryParam_Arr(selectUserIdxQuery, [req.body.email]);
@@ -41,15 +44,27 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                 if (selectUserIdxResult[0] == null) {
                     console.log('해당 유저 정보 없음');
                     res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.NULL_VALUE));
-                } else { //장르 삽입
-                    for (i = 0; i < genrelen; i++) {
+                } else { 
+                    //장르 삽입
+                    for (i = 0; i < genreLen; i++) {
                         const userGenreQuery = 'INSERT INTO user_genre (userIdx, genreIdx) VALUES (?,?)';
                         const userGenreResult = await pool.queryParam_Arr(userGenreQuery, [selectedUserIdx, req.body.genre[i]]);
                         if (!userGenreResult) {
                             console.log('장르 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.GENRE_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
                         } else { // 장르 삽입 성공
                             console.log('장르 삽입 성공');
+                        }
+                    }
+                    //분위기 삽입
+                    for (i=0; i < moodLen; i++) {
+                        const userMoodQuery = 'INSERT INTO user_mood (userIdx, moodIdx) VALUES (?,?)';
+                        const userMoodResult = await pool.queryParam_Arr(userMoodQuery, [selectedUserIdx, req.body.mood[i]]);
+                        if (!userMoodResult) {
+                            console.log('무드 삽입 실패');
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
+                        } else { // 장르 삽입 성공
+                            console.log('무드 삽입 성공');
                         }
                     }
                     //선호 아티스트 선택 삽입
@@ -58,7 +73,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userArtistResult = await pool.queryParam_Arr(userArtistQuery, [selectedUserIdx, req.body.originArtist[i]]);
                         if (!userArtistResult) {
                             console.log('아티스트 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.ARTIST_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
                         } else {
                             console.log('아티스트 삽입 성공');
                         }
@@ -96,6 +111,17 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                 }
             }
         }
+    }
+});
+
+// 회원가입 중 선호 아티스트 데이터 전송
+router.get('/originArtist', async (req, res, next) => {
+    selectOriginArtistQuery = 'SELECT * FROM originArtist';
+    selectOriginArtistResult = await pool.queryParam_None(selectOriginArtistQuery);
+    if (!selectOriginArtistResult){
+        res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.NULL_VALUE));
+    } else {
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "아티스트 조회 성공", selectOriginArtistResult));
     }
 });
 

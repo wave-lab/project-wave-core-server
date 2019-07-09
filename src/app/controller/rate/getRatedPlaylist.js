@@ -6,6 +6,12 @@ const returnCode = require('../../model/returnCode');
 const responseUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 
+const song = require('../../model/schema/song');
+const playlistModules = require('../../module/playlistModules');
+
+/**
+ * 내가 평가한 곡 리스트 조회
+ */
 
 router.get('/', async (req, res) => {
 
@@ -14,10 +20,8 @@ router.get('/', async (req, res) => {
 
     //회원일 경우
     if (ID > 0) {
-        const QUERY1 = 'SELECT rateSongCount, hitSongCount FROM user WHERE userIdx = ?';
-        let result1 = await pool.queryParam_Arr(QUERY1, ID);
-        console.log(result1);
-        res.status(200).send(responseUtil.successTrue(returnCode.OK, "평가 곡수, 적중 곡수 조회 성공", result1[0]));
+        const result1 = await playlistModules.getPlayList(ID, "rated");
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "내가 평가한 곡 플레이리스트", result1));
     }
     //비회원일 경우
     else if (ID == -1) {
