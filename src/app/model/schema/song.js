@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 let songSchema = new Schema({
     originTitle : String,
     userIdx : Number,
-    streamCount : Number,
+    totalStreamCount : Number,
     likeCount : Number,
     artwork : String,
     originArtistIdx : Number,

@@ -5,9 +5,13 @@ const router = express.Router({mergeParams: true})
 //곡 재생
 //router.use('/songs/:songIdx/user/:userIdx', require('./play'));
 
-//곡 좋아요/좋아요 취소
 // /songs/{songIdx}/like
-router.use('/likes/user/:userIdx/songs?songIdx={songIdx}', require('./likes'));
+
+//곡 좋아요 취소
+router.use('/songs/:songIdx/likes/user/:userIdx', require('./likes'));
+
+//곡 좋아요
+router.use('/likes', require('./likes'));
 
 //곡 업로드
 // /songs

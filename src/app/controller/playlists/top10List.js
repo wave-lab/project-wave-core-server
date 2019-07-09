@@ -10,7 +10,7 @@ const pool = require('../../module/pool');
 const top10 = require('../../model/schema/top10');
 
 /*
-TOP30플레이리스트 조회
+TOP10플레이리스트 조회
 METHOD       : GET
 URL          : /playlists/top10?genre = {genreName} or /playlist/top30?mood = {modeName}
 */
