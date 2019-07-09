@@ -51,7 +51,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userGenreResult = await pool.queryParam_Arr(userGenreQuery, [selectedUserIdx, req.body.genre[i]]);
                         if (!userGenreResult) {
                             console.log('장르 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.GENRE_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
                         } else { // 장르 삽입 성공
                             console.log('장르 삽입 성공');
                         }
@@ -62,7 +62,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userMoodResult = await pool.queryParam_Arr(userMoodQuery, [selectedUserIdx, req.body.mood[i]]);
                         if (!userMoodResult) {
                             console.log('무드 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.MOOD_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
                         } else { // 장르 삽입 성공
                             console.log('무드 삽입 성공');
                         }
@@ -73,7 +73,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                         const userArtistResult = await pool.queryParam_Arr(userArtistQuery, [selectedUserIdx, req.body.originArtist[i]]);
                         if (!userArtistResult) {
                             console.log('아티스트 삽입 실패');
-                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.ARTIST_FAIL));
+                            res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.SAVE_FAIL));
                         } else {
                             console.log('아티스트 삽입 성공');
                         }
@@ -111,6 +111,17 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
                 }
             }
         }
+    }
+});
+
+// 회원가입 중 선호 아티스트 데이터 전송
+router.get('/originArtist', async (req, res, next) => {
+    selectOriginArtistQuery = 'SELECT * FROM originArtist';
+    selectOriginArtistResult = await pool.queryParam_None(selectOriginArtistQuery);
+    if (!selectOriginArtistResult){
+        res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.NULL_VALUE));
+    } else {
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "아티스트 조회 성공", selectOriginArtistResult));
     }
 });
 
