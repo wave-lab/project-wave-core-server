@@ -8,45 +8,64 @@ const playlist = require('../../model/schema/playlist');//이렇게 해야 접�
 const top10 = require('../../model/schema/top10');
 const playlistModules = require('../../module/playlistModules');
 const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
+const genre = require('../../module/genre');
+const mood = require('../../module/mood');
 
 //1시간마다 해야할 일 : TOP10
-var everyHour = schedule.scheduleJob('30/5 * * * *', function() {
-    //let mNow  = new Date();
-    //console.log(mNow);
-    console.log('스케쥴러 실행');
-    console.log(timeFormat);
-    song.find({genreName : ' 힙합'}, async function(err, songResult) {
-        if(err) {
-            console.log(err);
-        }
-        else {
-            //console.log(result);
-            await playlist.create({
-                playlistName : "힙합",
-                playlistComment : "TOP30_힙합장르",
-                songList : songResult,
-            }, async function(err, playlistResult) {
-                if(err) {
-                    console.log(err);
-                } else {
-                    console.log(playlistResult);
-                    await top10.create({
-                        top10Name : playlistResult.playlistName,
-                        checkTime : timeFormat,
-                        playlistIdx : playlistResult._id
-                    }, async function(err, top10listResult) {
-                        if(err) {
-                            console.log(err);
-                        } else {
-                            console.log(top10listResult);
-                        }
-                    })
-                    //console.log(docs);
-                }
-            })
-            //console.log(result);
-        }
-     }).sort({streamCount : -1}).limit(10);  
+var everyHour = schedule.scheduleJob('0 0 * * * *', async function() {
+    console.log('스케줄러 실행');
+
+    const genreArray = [genre.g1, genre.g2, genre.g3, genre.g4, genre.g5, genre.g6, genre.g7, genre.g8];
+    for(let i = 0; i<genreArray.length; i++) {
+        await song.find({genreName : genreArray[i]}, async function(err, songResult) {
+            if(err) {
+                console.log(err);
+            }
+            else {
+                await playlist.create({
+                    playlistName : genreArray[i],
+                    playlistComment : `TOP30_${genreArray[i]}`,
+                    songList : songResult,
+                }, async function(err, playlistResult) {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        await top10.create({
+                            top10Name : playlistResult.playlistName,
+                            checkTime : timeFormat,
+                            playlistIdx : playlistResult._id
+                        })
+                    }
+                })
+            }
+         }).sort({streamCount : -1}).limit(10);
+    }
+
+    const moodArray = [mood.m1, mood.m2, mood.m3, mood.m4, mood.m5, mood.m6, mood.m7, mood.m8];
+    for(let j = 0; j<moodArray.length; j++) {
+        await song.find({moodName : moodArray[j]}, async function(err, songResult) {
+            if(err) {
+                console.log(err);
+            }
+            else {
+                await playlist.create({
+                    playlistName : moodArray[j],
+                    playlistComment : `TOP30_${moodArray[j]}`,
+                    songList : songResult,
+                }, async function(err, playlistResult) {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        await top10.create({
+                            top10Name : playlistResult.playlistName,
+                            checkTime : timeFormat,
+                            playlistIdx : playlistResult._id
+                        })
+                    }
+                })
+            }
+         }).sort({streamCount : -1}).limit(10);
+    }
 })
 
 module.exports = router;

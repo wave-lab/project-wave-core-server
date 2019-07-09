@@ -11,7 +11,10 @@ const router = express.Router({mergeParams: true})
 router.use('/songs/:songIdx/likes/user/:userIdx', require('./likes'));
 
 //곡 좋아요
-router.use('/likes', require('./likes'));
+router.use('/songs/likes', require('./likes'));
+
+//곡 조회수
+router.use('/songs/streaming', require('./streaming'));
 
 //곡 업로드
 // /songs
