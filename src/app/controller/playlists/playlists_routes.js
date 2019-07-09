@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router({mergeParams: true})
+const router = express.Router({mergeParams: true});
 
 // playlist 추가/삭제
 router.use('/manage', require('./playlistManage'));

@@ -17,4 +17,7 @@ router.use('/', require('./controller/user/user_routes'));
 //search
 router.use('/', require('./controller/search/search_routes'));
 
+//mypage
+router.use('/', require('./controller/mypage/mypage_routes'));
+
 module.exports = router;

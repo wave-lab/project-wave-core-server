@@ -116,7 +116,7 @@ router.post('/', upload.single('profileImg'), async (req, res, next) => {
 
 // 회원가입 중 선호 아티스트 데이터 전송
 router.get('/originArtist', async (req, res, next) => {
-    selectOriginArtistQuery = 'SELECT * FROM originArtist';
+    selectOriginArtistQuery = 'SELECT * FROM originArtist LIMIT 100';
     selectOriginArtistResult = await pool.queryParam_None(selectOriginArtistQuery);
     if (!selectOriginArtistResult){
         res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.NULL_VALUE));

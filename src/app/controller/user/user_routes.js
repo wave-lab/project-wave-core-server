@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router({mergeParams: true})
+const router = express.Router({mergeParams: true});
 
 // signup
 router.use('/user/signup', require('./signup'));
@@ -18,9 +18,6 @@ router.use('/user/nickname-check', require('./nickname-check'));
 
 // originArtist 추가
 router.use('/user/add-originArtist', require('./add-originArtist'));
-
-//mypage 조회
-router.use('/user/mypage', require('./mypage'));
 
 //사용자 평가한 곡 개수
 router.use('/rate-count', require('./getUserRateCount'));
