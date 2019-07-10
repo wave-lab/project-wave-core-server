@@ -5,8 +5,8 @@ const moment = require('moment');
 const playlistModules = require('../../module/playlistModules');
 const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
-'0 0 0 1/1 * ? *'
-schedule.scheduleJob('*/10 * * * * *', async function () { //매일 자정
+
+schedule.scheduleJob('0 0 0 1/1 * ? *', async function () { //매일 자정
     console.log('적중곡 판별 스케쥴러 실행');
     const getAllUserDataQuery = 'SELECT userIdx, hitSongCount, rateSongCount, totalPoint FROM user'
     const getUserRateScoreQuery = 'SELECT ratePoint, songIdx FROM rate_history WHERE userIdx = ?'
