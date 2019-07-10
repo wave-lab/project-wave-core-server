@@ -27,7 +27,7 @@ const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
  * songStatus 0유보 1 통과 2 실패
  */
 
-var twelveHour = schedule.scheduleJob('30 * * * * *', async () => {
+var twelveHour = schedule.scheduleJob('0 0 12 1/1 * ? *', async () => {
     console.log("현재시간 : " + new Date() + " 평가 대기곡 스케줄러 실행");
 
     const QUERY1 = 'SELECT userIdx FROM user';
