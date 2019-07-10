@@ -26,8 +26,14 @@ router.post('/', multiUpload, async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const body = req.body;
-        const genreArray = body.genre[4].split(',');
-        const moodArray = body.mood[4].split(',');
+        const genreNameArray = new Array(body.genre.length);
+        for(var i = 0 ; i < body.genre.length ; i++) {
+            genreNameArray[i] = genre[(body.genre)[i]];
+        }
+        const moodNameArray = new Array(body.mood.length);
+        for(var i = 0 ; i < body.mood.length ; i++) {
+            moodNameArray[i] = mood[(body.mood)[i]];
+        }
         const artworkUrl = req.files.artwork[0].location;
         const songUrl = req.files.songUrl[0].location;
         const coverArtistNameQuery = 'SELECT nickname FROM user WHERE userIdx= ?';
@@ -46,8 +52,8 @@ router.post('/', multiUpload, async (req, res) => {
             originArtistName: body.originArtistName,
             enrollTime: null,
             songUrl: songUrl,
-            genre: genreArray,
-            mood: moodArray,
+            genre: genreNameArray,
+            mood: moodNameArray,
             songComment: body.songComment,
             reportCount: 0,
             rateScore: 0,
@@ -70,10 +76,8 @@ router.post('/', multiUpload, async (req, res) => {
             })
         } 
         else {
-            await song.create(inputSongData, async function (err, docs) {
-                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
-            })
-
+            await song.create(inputSongData)
+            res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
         }
 
 

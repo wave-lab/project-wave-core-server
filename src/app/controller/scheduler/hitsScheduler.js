@@ -4,8 +4,8 @@ const schedule = require('node-schedule');
 const moment = require('moment');
 const playlistModules = require('../../module/playlistModules');
 const pool = require('../../module/pool');
-
-schedule.scheduleJob('0 0 0 1/1 * ? *', async function () { //매일 자정
+'0 0 0 1/1 * ? *'
+schedule.scheduleJob('*/10 * * * * *', async function () { //매일 자정
     console.log('적중곡 판별 스케쥴러 실행');
     const getAllUserDataQuery = 'SELECT userIdx, hitSongCount, rateSongCount, totalPoint FROM user'
     const getUserRateScoreQuery = 'SELECT ratePoint, songIdx FROM rate_history WHERE userIdx = ?'
@@ -22,6 +22,7 @@ schedule.scheduleJob('0 0 0 1/1 * ? *', async function () { //매일 자정
         else {
             let userIdx = getAllUserDataResult[i].userIdx;
             const ratedPlaylistIdx = (await playlistModules.getPlayList(userIdx, 'rated'))._id;
+            console.log(ratedPlaylistIdx);
             const hitsPlaylistIdx = (await playlistModules.getPlayList(userIdx, 'hits'))._id;
             const ratedSongList = await playlistModules.getSongList(ratedPlaylistIdx);
             const getUserRateScoreResult = await pool.queryParam_Arr(getUserRateScoreQuery, [userIdx]);
