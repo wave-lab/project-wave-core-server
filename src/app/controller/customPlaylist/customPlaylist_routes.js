@@ -6,6 +6,7 @@ router.use('/custom/songs', require('./playlist'));
 
 // playlist 자체를 추가/삭제
 router.use('/custom/manage', require('./playlistManage'));
+
 // playlist 삭제
 router.use('/manage/:playlistIdx/user/:userIdx', require('./playlistManage'));
 
