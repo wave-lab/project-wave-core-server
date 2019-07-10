@@ -26,7 +26,7 @@ router.use('/', require('./controller/songs/songs_routes'));
 //search
 router.use('/', require('./controller/search/search_routes'));
 
-//health-chekc
-router.use('/', require('./controller/health'))
+//health-check
+router.use('/health-check', require('./controller/health'))
 
 module.exports = router;
