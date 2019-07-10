@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router({mergeParams: true})
 
 //곡 재생
-//router.use('/songs/:songIdx/user/:userIdx', require('./play'));
+router.use('/songs/:songIdx', require('./getSong'));
 
 // /songs/{songIdx}/like
 
