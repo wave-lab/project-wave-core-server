@@ -5,7 +5,7 @@ const moment = require('moment');
 const playlistModules = require('../../module/playlistModules');
 const pool = require('../../module/pool');
 
-schedule.scheduleJob('0 5 0 1/1 * ? *', async function () {
+schedule.scheduleJob('0 0 0 1/1 * ? *', async function () { //매일 자정
     console.log('적중곡 판별 스케쥴러 실행');
     const getAllUserDataQuery = 'SELECT userIdx, hitSongCount, rateSongCount, totalPoint FROM user'
     const getUserRateScoreQuery = 'SELECT ratePoint, songIdx FROM rate_history WHERE userIdx = ?'
@@ -63,32 +63,3 @@ schedule.scheduleJob('0 5 0 1/1 * ? *', async function () {
 })
 
 module.exports = router;
-
-
-/*
-    1. user에서 userIdx와 hitSongCount 들을 가져오고 = user.userIdx
-    for(var i in userIdx) {
-        rate_history.songIdx, ratePoint by user.userIdx
-        ratedSongList = getSongList(userIdx[i],'rated')
-        for(var i in ratedSongList) {
-            if(rate_history.songIdx == ratedSongList[i]._id) {
-                아이디 같은지 검사
-                if(ratedSongList[i].status == 0) {
-                    유보인지 검사
-                }
-                else {
-                    유보 아니면
-                    if(ratedSongList[i].rateScore/rateUserCount ( 평균 점수 ) -0.3 < rate_history.ratePoint< 평균점수 + 0.3) {
-                        addSongToPlaylist(ratedPlaylistIdx, ratedSongList[i]._id, )
-                        deleteSongFrOM // 일단 놔둠
-                        hitSongCount++;
-                    }
-                }
-            }
-        }
-    }
-
-
-
-
-*/

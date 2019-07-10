@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router({ mergeParams: true })
+const router = express.Router({mergeParams: true})
 
 const jwt = require('../../module/jwt');
 const returnCode = require('../../model/returnCode');
@@ -7,10 +7,9 @@ const responseUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 
 const song = require('../../model/schema/song');
-const playlistModules = require('../../module/playlistModules');
 
 /**
- * 내가 평가한 곡 리스트 조회
+ * 페이지네이션 X
  */
 
 router.get('/', async (req, res) => {
@@ -20,8 +19,17 @@ router.get('/', async (req, res) => {
 
     //회원일 경우
     if (ID > 0) {
-        const result1 = await playlistModules.getPlayList(ID, "rated");
-        res.status(200).send(responseUtil.successTrue(returnCode.OK, "내가 평가한 곡 플레이리스트", result1));
+        const QUERY1 = 'SELECT * FROM point_history WHERE userIdx = ?';
+        let result1 = await pool.queryParam_Arr(QUERY1, ID);
+
+        for(i = 0; i < result1.length; i++) {
+            if(result1[i].songIdx != 1) {
+                let result2 = await song.find({ _id : result1[i].songIdx });
+                result1[i].song = result2;
+            }   
+        }
+
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, "포인트 내역 조회", result1));
     }
     //비회원일 경우
     else if (ID == -1) {

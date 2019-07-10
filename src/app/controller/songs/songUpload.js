@@ -9,53 +9,71 @@ const returnMessage = require('../../../config/returnMessage');
 const resUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
-const timeFormat = moment().add(9, 'hours').format('YYYY-MM-DD HH:mm:ss');
-const expirationTimeFormat = moment().add(7, 'days').add(9, 'hours').format('YYYY-MM-DD HH:mm:ss');
+const genre = require('../../module/genre');
+const mood  = require('../../module/mood')
 
 
-const multiUpload = upload.fields([{ name: 'uploadSong' }, { name: 'artwork' }]);
+const multiUpload = upload.fields([{
+    name: 'songUrl'
+}, {
+    name: 'artwork'
+}]);
 
 router.post('/', multiUpload, async (req, res) => {
 
     //ID = userIdx
     const ID = jwt.verify(req.headers.authorization);
-    console.log(ID);
     //회원일 경우
     if (ID > 0) {
         const body = req.body;
-        const genreNameArray = body.genreName[4].split(',');
-        const moodNameArray = body.moodName[4].split(',');
-
-        if (body.originArtistIdx == null || body.originTitle == null || req.files.uploadSong[0].location == undefined) {
+        const genreArray = body.genre[4].split(',');
+        const moodArray = body.mood[4].split(',');
+        const artworkUrl = req.files.artwork[0].location;
+        const songUrl = req.files.songUrl[0].location;
+        const coverArtistNameQuery = 'SELECT nickname FROM user WHERE userIdx= ?';
+        const coverArtistName = (await pool.queryParam_Arr(coverArtistNameQuery, [ID]))[0].nickname;
+        const originArtistIdxQuery = 'SELECT originArtistIdx FROM originArtist WHERE originArtistName=?';
+        
+        const insertNewOriginArtistQuery = 'INSERT INTO originArtist (originArtistName) VALUES (?)';
+        const inputSongData = {
+            originTitle: body.originTitle,
+            userIdx: ID,
+            coverArtistName: coverArtistName,
+            streamCount: 0,
+            likeCount: 0,
+            artwork: artworkUrl,
+            originArtistIdx: body.originArtistIdx,
+            originArtistName: body.originArtistName,
+            enrollTime: null,
+            songUrl: songUrl,
+            genre: genreArray,
+            mood: moodArray,
+            songComment: body.songComment,
+            reportCount: 0,
+            rateScore: 0,
+            highlightTime: body.highlightTime,
+            songStatus: 0,
+            uploadDate: moment(),
+            deleteTime: moment().add(7, 'days'),
+            rateUserCount: 0
+        }
+        if (body.originTitle == null || songUrl == undefined) {
             console.log(err);
             res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
-        }
-        else {
-            const artworkUrl = req.files.artwork[0].location;
-            const uploadSongUrl = req.files.uploadSong[0].location;
-            const inputSongData = {
-                originTitle: body.originTitle,
-                userIdx: ID,
-                streamCount: 0,
-                likeCount: 0,
-                artwork: artworkUrl,
-                originArtistIdx: body.originArtistIdx,
-                enrollTime: null,
-                songUrl: uploadSongUrl,
-                genreName: genreNameArray,
-                moodName: moodNameArray,
-                songComment: body.songComment,
-                reportCount: 0,
-                rateScore: 0,
-                highlightTime: body.highlightTime,
-                songStatus: 0,
-                uploadDate: moment(),
-                deleteTime: moment().add(7, 'days'),
-                rateUserCount: 0
-            }
+        } else if (body.originArtistIdx == null) {
+            await pool.queryParam_Arr(insertNewOriginArtistQuery, [body.originArtistName]);
+            console.log('새 원곡가수 삽입 성공');
+            const originArtistIdx = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]))[0].originArtistIdx;
+            inputSongData.originArtistIdx = originArtistIdx;
             await song.create(inputSongData, async function (err, docs) {
                 res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
             })
+        } 
+        else {
+            await song.create(inputSongData, async function (err, docs) {
+                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
+            })
+
         }
 
 

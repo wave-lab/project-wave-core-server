@@ -4,22 +4,24 @@ let Schema = mongoose.Schema;
 let songSchema = new Schema({
     originTitle : String,
     userIdx : Number,
+    coverArtistName : String,
     streamCount : Number,
     likeCount : Number,
     artwork : String,
     originArtistIdx : Number,
-    enrollTime : String,
+    originArtistName : String,
+    enrollTime : Date,
     songUrl : String,
-    genreName : Array,
-    moodName : Array,
+    genre : Array,
+    mood : Array,
     songComment : String,
     reportCount : Number,
     rateScore : Number,
     highlightTime : String,
     songStatus : Number,
-    deleteTime : String,
+    deleteTime : Date,
     rateUserCount : Number,
-    uploadDate : String
+    uploadDate : Date
 },{
     versionKey: false // You should be aware of the outcome after set to false
 });

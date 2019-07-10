@@ -5,21 +5,16 @@ const router = express.Router({mergeParams: true})
 //곡 재생
 //router.use('/songs/:songIdx/user/:userIdx', require('./play'));
 
-//곡 좋아요/좋아요 취소
 // /songs/{songIdx}/like
-router.use('/likes/user/:userIdx/songs?songIdx={songIdx}', require('./likes'));
+
+//곡 좋아요 취소
+router.use('/songs/:songIdx/like/user/:userIdx', require('./like'));
+
+//곡 좋아요
+router.use('/songs/like', require('./like'));
 
 //곡 업로드
-// /songs
 router.use('/songs/upload', require('./songUpload'));
-
-//아티스트 프로필 조회
-// /users/{userIdx}
-router.use('/artist/:userIdx', require('./artist'));
-
-//추천곡 조회
-// playlist로
-router.use('/songs/recommend/:userIdx', require('./recommend'));
 
 //곡 평가
 router.use('/songs/:songIdx/rate', require('./songRate'));

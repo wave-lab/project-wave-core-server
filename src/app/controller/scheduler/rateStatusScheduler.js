@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const schedule = require('node-schedule');
-const moment = require('moment');
+const moment = require('moment', 'ddd DD MMM YYYY HH:mm:ss ZZ');
 const song = require('../../model/schema/song')
 
-schedule.scheduleJob('0 10 0 1/1 * ? *', async function () {
+schedule.scheduleJob('0 0 12 1/1 * ? *', async function () { //매일 정오
     console.log('심사곡 상태 판별 스케쥴러 실행');
     const allSongs = await song.find();
     for (var i = 0; i < allSongs.length; i++) {
@@ -16,31 +16,32 @@ schedule.scheduleJob('0 10 0 1/1 * ? *', async function () {
             const duration = moment().diff(deleteTime, 'seconds');
             if (duration > 0) { // 7일 지났을 때
                 if (allSongs[i].rateUserCount < 10) {
-                    console.log('마감했고 평가 유저수도 부족. 탈락!');
+                    console.log('songId : ' +allSongs[i]._id+'==> 마감했고 평가 유저수도 부족. 탈락!');
                     await song.updateOne({_id : allSongs[i]._id}, {$set : {"songStatus" : 2}})
                 }
                 else {
                     let average = (parseFloat(allSongs[i].rateScore / allSongs[i].rateUserCount).toFixed(1));
-                    console.log('7일 만료. 점수 검사');
-                    console.log('점수는 : ' + average);
+                    console.log('songId : ' +allSongs[i]._id+ ' ==> 7일 만료. 점수 검사');
+                    console.log('songId : ' +allSongs[i]._id+ ' ==> 점수는 : ' + average);
                     if (average < 3) {
-                        console.log('마감했고 평가 유저수는 넘었지만 점수가 미달. 탈락!');
+                        console.log('songId : ' +allSongs[i]._id+'==> 마감했고 평가 유저수는 넘었지만 점수가 미달. 탈락!');
                         await song.updateOne({_id : allSongs[i]._id}, {$set : {"songStatus" : 2}})
                     }
                     else {
-                        console.log('합격!');
-                        await song.updateOne({_id : allSongs[i]._id}, {$set : {"songStatus" : 1}})
+                        console.log('songId : ' +allSongs[i]._id+ '==>합격!');
+                        await song.updateMany({_id : allSongs[i]._id}, {$set : {"songStatus" : 1, "enrollTime" : moment()}})
+                        
                     }
                 }
             }
             else {
                 if(allSongs[i].rateUserCount >= 10) {
                     let average = (parseFloat(allSongs[i].rateScore / allSongs[i].rateUserCount).toFixed(1));
-                    console.log('점수 검사');
-                    console.log('점수는 : ' + average);
+                    console.log('songId : ' +allSongs[i]._id+ '==>점수 검사');
+                    console.log('songId : ' +allSongs[i]._id+ ' ==> 점수는 : ' + average);
                     if(average >= 3) {
-                        console.log('합격');
-                        await song.updateOne({_id : allSongs[i]._id}, {$set : {"songStatus" : 1}})
+                        console.log('songId : ' +allSongs[i]._id+' ==> 합격');
+                        await song.updateMany({_id : allSongs[i]._id}, {$set : {"songStatus" : 1, "enrollTime" : moment()}})
                     }
                 }
                 else {

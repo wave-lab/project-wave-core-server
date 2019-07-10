@@ -9,6 +9,7 @@ const song = require('../../model/schema/song');
 const playlist = require('../../model/schema/playlist');//이렇게 해야 접근 가능
 const top10 = require('../../model/schema/top10');
 const playlistModules = require('../../module/playlistModules');
+const myPlaylist = require('../../model/schema/myPlaylist');
 
 const genre = require('../../module/genre');
 
@@ -26,10 +27,8 @@ const timeFormat = moment().format('YYYY-MM-DD HH:mm:ss');
  * songStatus 0유보 1 통과 2 실패
  */
 
-var twelveHour = schedule.scheduleJob('30 * * * * *', async () => {
-    let mNow = new Date();
-    console.log("현재시간 : " + mNow);
-    console.log('스케쥴러 실행');
+var twelveHour = schedule.scheduleJob('0 0 12 1/1 * ? *', async () => { //매일 정오
+    console.log("현재시간 : " + new Date() + " 평가 대기곡 스케줄러 실행");
 
     const QUERY1 = 'SELECT userIdx FROM user';
     const QUERY2 = 'SELECT * FROM user_originArtist WHERE userIdx = ?'
@@ -37,10 +36,9 @@ var twelveHour = schedule.scheduleJob('30 * * * * *', async () => {
 
     const result1 = await pool.queryParam_None(QUERY1);
 
-    let playlist = [];
+    let songList = [];
 
     for (i = 0; i < result1.length; i++) {
-        console.log("userIdx : " + result1[i].userIdx);
 
         //사용자가 좋아하는 아티스트 조회
         const result2 = await pool.queryParam_Arr(QUERY2, result1[i].userIdx);
@@ -53,7 +51,7 @@ var twelveHour = schedule.scheduleJob('30 * * * * *', async () => {
                 { userIdx: result2[0].originArtistIdx },
                 { songStatus: 0 }
             );
-            playlist.push(songlist);
+            songList.push(songlist);
         }
 
         //사용자가 좋아하는 장르
@@ -63,18 +61,16 @@ var twelveHour = schedule.scheduleJob('30 * * * * *', async () => {
             //해당 사용자가 올린 곡은 아니면서
             //songStatus == 0
             const songlist = await song.find(
-                { genreName : result3[0].genreIdx },
+                { genreName: result3[0].genreIdx },
                 { songStatus: 0 }
             );
-            playlist.push(songlist);
+            songList.push(songlist);
         }
 
-        console.log(playlist.length);
-
-        //해당 사용자가 올린 곡은 아니면서
-
-        //songStatus == 0
+        const result4 = (await myPlaylist.find({ userIdx: result1[i].userIdx }))[0];
+        await playlist.updateOne({ _id: result4.rateReadyPlaylist }, { $set: { songList: songList } });
     }
+    console.log("현재시간 : " + new Date() + " 평가 대기곡 스케줄러 실행 끝");
 })
 
 module.exports = router;
