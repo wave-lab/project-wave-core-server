@@ -29,9 +29,7 @@ router.get('/', async (req, res) => {
             "custom": {
                 customArray : customArray,
                 thumbnail : customArtworksArray
-            },
-            "history": (await playlistModules.getSongList(myPlaylist.historyPlaylist)),
-            "like": (await playlistModules.getSongList(myPlaylist.likePlaylist))
+            }
         }
         res.status(200).send(responseUtil.successTrue(returnCode.OK, "myPlaylist 조회 성공", result))
     }
