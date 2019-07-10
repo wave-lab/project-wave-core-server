@@ -10,7 +10,7 @@ let songSchema = new Schema({
     artwork : String,
     originArtistIdx : Number,
     originArtistName : String,
-    enrollTime : String,
+    enrollTime : Date,
     songUrl : String,
     genre : Array,
     mood : Array,
@@ -19,9 +19,9 @@ let songSchema = new Schema({
     rateScore : Number,
     highlightTime : String,
     songStatus : Number,
-    deleteTime : String,
+    deleteTime : Date,
     rateUserCount : Number,
-    uploadDate : String
+    uploadDate : Date
 },{
     versionKey: false // You should be aware of the outcome after set to false
 });

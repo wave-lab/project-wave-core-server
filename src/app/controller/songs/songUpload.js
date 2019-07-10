@@ -9,8 +9,8 @@ const returnMessage = require('../../../config/returnMessage');
 const resUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
-const timeFormat = moment().add(9, 'hours').format('YYYY-MM-DD HH:mm:ss');
-const expirationTimeFormat = moment().add(7, 'days').add(9, 'hours').format('YYYY-MM-DD HH:mm:ss');
+const genre = require('../../module/genre');
+const mood  = require('../../module/mood')
 
 
 const multiUpload = upload.fields([{
