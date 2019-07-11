@@ -8,12 +8,12 @@ const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
 const jwt = require('../../module/jwt');
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
 
     const ID = jwt.verify(req.headers.authorization);
     const songIdx = req.params.songIdx;
 
-    const result = (await song.find({ _id : songIdx }))[0];
+    const result = (await song.find({ _id: songIdx }))[0];
 
     if (ID != -1) {
         console.log(ID);
