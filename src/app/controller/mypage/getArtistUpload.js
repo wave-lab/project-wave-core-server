@@ -16,9 +16,22 @@ router.get('/', async (req, res, next) => {
     if (result != undefined) {
 
         let query = {
-            '_id': result.uploadPlaylist,
+            $and: []
+        };
+
+        query.$and.push({
+            '_id': result.uploadPlaylist
+        });
+        query.$and.push({
             'songList.songStatus': 1
-        }
+        });
+
+        // let query = {
+        //     '_id': result.likePlaylist,
+        //     'songList.songStatus': 1
+        // }
+
+        console.log(query);
 
         const result2 = (await playlist.find(query))[0];
 
