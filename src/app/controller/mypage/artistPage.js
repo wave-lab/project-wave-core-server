@@ -11,6 +11,7 @@ const responseUtil = require('../../module/responseUtil');
 // 일반유저가 아티스트 프로필 조회
 router.get('/', async(req, res, next) => {
     const ID = await jwt.verify(req.headers.authorization);
+    
     console.log(ID);
 
     if(ID > 0) { //회원일 경우
@@ -54,3 +55,4 @@ router.get('/', async(req, res, next) => {
 });
 
 module.exports = router;
+
