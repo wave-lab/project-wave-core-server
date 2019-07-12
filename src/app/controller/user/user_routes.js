@@ -16,7 +16,4 @@ router.use('/signin', require('./signin'));
 //originAritst
 router.use('/originArtist', require('./getOriginArtist'));
 
-// kakao signin
-// router.use('/user/kakaoSignin', require('./kakaoSignin'));
-
 module.exports = router;
