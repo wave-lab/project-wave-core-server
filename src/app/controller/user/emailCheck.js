@@ -4,18 +4,18 @@ const pool = require('../../module/pool.js');
 const nodemailer = require('nodemailer');
 const smtpPool = require('nodemailer-smtp-pool');
 const emailConfig = require('../../../config/emailConfig');
-const qs = require('querystring');
+
 const returnCode = require('../../model/returnCode');
 const returnMessage = require('../../../config/returnMessage');
 const responseUtil = require('../../module/responseUtil');
-
-//인증번호 값
-const rand = Math.floor(Math.random() * 1000000) + 100000;
 
 //유효한 email인지 확인
 router.post('/', async (req, res, next) => {
     const selectEmailQuery = 'SELECT email FROM user WHERE email = ?';
     const selectEmailResult = await pool.queryParam_Arr(selectEmailQuery, [req.body.email]);
+
+    //인증번호 값
+    let rand = Math.floor(Math.random() * 1000000) + 100000;
     if (selectEmailResult[0] == null) {
         
         const from = 'WAVE';
@@ -51,7 +51,7 @@ router.post('/', async (req, res, next) => {
                 console.log(err);
                 res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SEND_EMAIL_FAIL));
             } else {
-                res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.SEND_EMAIL));
+                res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.SEND_EMAIL, rand));
             }
             transporter.close();
         });
