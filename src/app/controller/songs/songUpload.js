@@ -38,7 +38,7 @@ router.post('/', multiUpload, async (req, res) => {
         const songUrl = req.files.songUrl[0].location;
         const coverArtistNameQuery = 'SELECT nickname FROM user WHERE userIdx= ?';
         const coverArtistName = (await pool.queryParam_Arr(coverArtistNameQuery, [ID]))[0].nickname;
-        const originArtistIdxQuery = 'SELECT originArtistIdx FROM originArtist WHERE originArtistName=?';
+        const originArtistIdxQuery = 'SELECT * FROM originArtist WHERE originArtistName=?';
         
         const insertNewOriginArtistQuery = 'INSERT INTO originArtist (originArtistName) VALUES (?)';
         const inputSongData = {
@@ -48,7 +48,7 @@ router.post('/', multiUpload, async (req, res) => {
             streamCount: 0,
             likeCount: 0,
             artwork: artworkUrl,
-            originArtistIdx: body.originArtistIdx,
+            originArtistIdx : null,
             originArtistName: body.originArtistName,
             enrollTime: null,
             songUrl: songUrl,
@@ -63,21 +63,24 @@ router.post('/', multiUpload, async (req, res) => {
             deleteTime: moment().add(7, 'days'),
             rateUserCount: 0
         }
+        const originArtistData = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]));
         if (body.originTitle == null || songUrl == undefined) {
             console.log(err);
             res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
-        } else if (body.originArtistIdx == null) {
+        } else if (originArtistData[0] == undefined) {
             await pool.queryParam_Arr(insertNewOriginArtistQuery, [body.originArtistName]);
             console.log('새 원곡가수 삽입 성공');
-            const originArtistIdx = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]))[0].originArtistIdx;
-            inputSongData.originArtistIdx = originArtistIdx;
+            const newData = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]));
+            inputSongData.originArtistIdx = newData[0].originArtistIdx;
             await song.create(inputSongData, async function (err, docs) {
-                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
+                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS, docs));
             })
         } 
         else {
-            await song.create(inputSongData)
-            res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
+            inputSongData.originArtistIdx = originArtistData[0].originArtistIdx;
+            await song.create(inputSongData, async function(err, docs){
+                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS, docs));
+            })
         }
 
 
