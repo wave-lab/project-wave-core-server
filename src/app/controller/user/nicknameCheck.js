@@ -12,10 +12,8 @@ router.get('/', async (req, res, next) => {
     const selectNicknameResult = await pool.queryParam_Arr(selectNicknameQuery, [req.query.nickname]);
     
     if(selectNicknameResult[0] == null){ // 닉네임 중복이 없을 때
-        console.log('닉네임 사용 가능');
         res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.NICKNAME_CHECK_SUCCESS));
     }else{ // 닉네임이 중복될 때
-        console.log('닉네임 중복');
         res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.DUPLICATED_NICKNAME_FAIL));
     }
 });
