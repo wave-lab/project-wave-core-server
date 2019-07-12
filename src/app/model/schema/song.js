@@ -15,7 +15,6 @@ let songSchema = new Schema({
     genre : Array,
     mood : Array,
     songComment : String,
-    reportCount : Number,
     rateScore : Number,
     highlightTime : String,
     songStatus : Number,
