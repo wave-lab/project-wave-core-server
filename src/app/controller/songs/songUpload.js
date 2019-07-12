@@ -26,16 +26,20 @@ router.post('/', multiUpload, async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const body = req.body;
-
         console.log(body);
-        const genreArray = body.genre;
-        const moodArray = body.mood;
-
+        const genreNameArray = new Array();
+        for(var i = 0 ; i < body.genre.length ; i++) {
+            genreNameArray[i] = genre[(body.genre)[i]];
+        }
+        const moodNameArray = new Array();
+        for(var i = 0 ; i < body.mood.length ; i++) {
+            moodNameArray[i] = mood[(body.mood)[i]];
+        }
         const artworkUrl = req.files.artwork[0].location;
         const songUrl = req.files.songUrl[0].location;
 
         const coverArtistNameQuery = 'SELECT nickname FROM user WHERE userIdx= ?';
-        const coverArtistName = (await pool.queryParam_Arr(coverArtistNameQuery, [ID]))[0].nickname;<<<<<<< feature_ju
+        const coverArtistName = (await pool.queryParam_Arr(coverArtistNameQuery, [ID]))[0].nickname;
         const originArtistIdxQuery = 'SELECT * FROM originArtist WHERE originArtistName=?';
         const insertNewOriginArtistQuery = 'INSERT INTO originArtist (originArtistName) VALUES (?)';
 
