@@ -15,7 +15,6 @@ const rand = Math.floor(Math.random() * 1000000) + 100000;
 //유효한 email인지 확인
 router.post('/', async (req, res, next) => {
     const selectEmailQuery = 'SELECT email FROM user WHERE email = ?';
-    console.log(req.body);
     const selectEmailResult = await pool.queryParam_Arr(selectEmailQuery, [req.body.email]);
     if (selectEmailResult[0] == null) {
         
