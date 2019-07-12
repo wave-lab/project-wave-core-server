@@ -26,7 +26,6 @@ router.post('/', multiUpload, async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const body = req.body;
-        console.log(body);
         const genreNameArray = new Array();
         for(var i = 0 ; i < body.genre.length ; i++) {
             genreNameArray[i] = genre[(body.genre)[i]];
