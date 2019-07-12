@@ -55,9 +55,8 @@ router.post('/', async (req, res, next) => {
             }
             transporter.close();
         });
-    }else{
-        console.log('중복 이메일 존재');
-        res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.DUPLICATED_EMAIL_FAIL));
+    } else {
+        res.status(200).send(responseUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.DUPLICATED_EMAIL_FAIL));
     }
 });
 
