@@ -16,9 +16,6 @@ router.use('/users/:userIdx/pl/likes', require('./getArtistLikes'));
 //아티스트의 커스텀 플레이리스트 조회
 router.use('/users/:userIdx/pl/custom', require('./getArtistCustom'));
 
-// 아티스트 페이지 조회
-//router.use('/myPage/artistPage', require('./artistPage'));
-
 // 포인트 히스토리
 router.use('/myPage/pointHistory', require('./pointHistory'));
 

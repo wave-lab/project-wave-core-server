@@ -8,15 +8,12 @@ router.use('/users/emailCheck', require('./emailCheck'));
 router.use('/users/nicknameCheck', require('./nicknameCheck'));
 
 // signup
-router.use('/user/signup', require('./signup'));
+router.use('/signup', require('./signup'));
 
 // signin
-router.use('/user/signin', require('./signin'));
+router.use('/signin', require('./signin'));
 
 //originAritst
 router.use('/originArtist', require('./getOriginArtist'));
-
-// kakao signin
-// router.use('/user/kakaoSignin', require('./kakaoSignin'));
 
 module.exports = router;
