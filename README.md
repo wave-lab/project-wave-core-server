@@ -9,6 +9,11 @@
 * **API** - (https://github.com/wave-lab/project-wave-server/wiki)
 
 
+
+![architecture.png](https://github.com/wave-lab/project-wave-scheduler-server/blob/master/img/architecture.png?raw=true)
+
+
+
 ![erd.png](https://github.com/wave-lab/project-wave-scheduler-server/blob/master/img/erd.PNG?raw=true)
 
 
