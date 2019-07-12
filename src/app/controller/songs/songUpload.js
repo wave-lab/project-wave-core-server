@@ -10,7 +10,7 @@ const resUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
 const genre = require('../../module/genre');
-const mood  = require('../../module/mood')
+const mood = require('../../module/mood')
 
 
 const multiUpload = upload.fields([{
@@ -26,15 +26,20 @@ router.post('/', multiUpload, async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const body = req.body;
-        const genreArray = body.genre[4].split(',');
-        const moodArray = body.mood[4].split(',');
+
+        const genreArray = body.genre;
+        const moodArray = body.mood;
+
         const artworkUrl = req.files.artwork[0].location;
         const songUrl = req.files.songUrl[0].location;
+
         const coverArtistNameQuery = 'SELECT nickname FROM user WHERE userIdx= ?';
         const coverArtistName = (await pool.queryParam_Arr(coverArtistNameQuery, [ID]))[0].nickname;
+
         const originArtistIdxQuery = 'SELECT originArtistIdx FROM originArtist WHERE originArtistName=?';
-        
+
         const insertNewOriginArtistQuery = 'INSERT INTO originArtist (originArtistName) VALUES (?)';
+
         const inputSongData = {
             originTitle: body.originTitle,
             userIdx: ID,
@@ -58,17 +63,15 @@ router.post('/', multiUpload, async (req, res) => {
             rateUserCount: 0
         }
         if (body.originTitle == null || songUrl == undefined) {
-            console.log(err);
             res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
         } else if (body.originArtistIdx == null) {
             await pool.queryParam_Arr(insertNewOriginArtistQuery, [body.originArtistName]);
-            console.log('새 원곡가수 삽입 성공');
             const originArtistIdx = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]))[0].originArtistIdx;
             inputSongData.originArtistIdx = originArtistIdx;
             await song.create(inputSongData, async function (err, docs) {
                 res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
             })
-        } 
+        }
         else {
             await song.create(inputSongData, async function (err, docs) {
                 res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
