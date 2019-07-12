@@ -4,7 +4,7 @@ const responseUtil = require('../../module/responseUtil');
 const returnCode = require('../../model/returnCode');
 const pool = require('../../module/pool');
 
-var qs = require('querystring');
+const qs = require('querystring');
 
 const song = require('../../model/schema/song');
 
