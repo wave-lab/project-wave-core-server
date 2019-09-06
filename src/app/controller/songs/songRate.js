@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
 
     //회원일 경우.
     if (ID > 0) {
-
+        console.log(songIdx);
         let result1 = await pool.queryParam_Arr(isRateHistory, [ID, songIdx]);
         console.log(result1);
         console.log(result1.length);

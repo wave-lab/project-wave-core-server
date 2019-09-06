@@ -11,7 +11,7 @@ const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
 const genre = require('../../module/genre');
 const mood = require('../../module/mood')
-
+const playlistModules = require('../../module/playlistModules');
 
 const multiUpload = upload.fields([{
     name: 'songUrl'
@@ -80,7 +80,9 @@ router.post('/', multiUpload, async (req, res) => {
         }
         else {
             inputSongData.originArtistIdx = originArtistData[0].originArtistIdx;
+            const uploadPlaylistIdx = (await playlistModules.getPlayList(ID, 'upload'))._id;
             await song.create(inputSongData, async function(err, docs){
+                await playlistModules.addSongToPlaylist(uploadPlaylistIdx, docs._id)
                 res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS, docs));
             })
         }
