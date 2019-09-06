@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router({mergeParams: true})
+const router = express.Router({ mergeParams: true })
 const pool = require('../../module/pool.js');
 const jwt = require('../../module/jwt');
 const playlistModules = require('../../module/playlistModules');
@@ -8,56 +8,29 @@ const upload = require('../../../config/multer');
 const returnCode = require('../../model/returnCode');
 const returnMessage = require('../../../config/returnMessage');
 const responseUtil = require('../../module/responseUtil');
+const history = require('../../model/schema/history');
 
 // 마이 페이지 조회
-router.get('/', async(req, res, next) => { // 마이페이지 조회
+router.get('/', async (req, res, next) => { // 마이페이지 조회
     const ID = await jwt.verify(req.headers.authorization);
-    console.log(ID);
-    
-    if(ID > 0) { //회원일 경우
-        const selectUserQuery = 'SELECT * FROM user WHERE userIdx = ?';
-        const selectUserResult = await pool.queryParam_Arr(selectUserQuery, [ID]);
+
+    if (ID > 0) { //회원일 경우
+        const selectUserQuery = 'SELECT rateSongCount, hitSongCount, nickName, totalPoint, isArtist, profileImg, backImg FROM user WHERE userIdx = ?';
+        const selectUserResult = await pool.queryParam_Arr(selectUserQuery, ID);
         const userInfo = selectUserResult[0]; // user의 모든 정보
 
-        // const selectUserGenreQuery = 'SELECT * FROM user_genre WHERE userIdx = ?';
-        // const selectUserGenreResult = await pool.queryParam_Arr(selectUserGenreQuery, [ID]);
-        // const userGenre = selectUserGenreResult; // user의 선호 장르 정보
-        
-        const myPlaylist = await playlistModules.searchMyPlaylist(ID); // 사용자의 플레이리스트 모두 가져옴
-        console.log(myPlaylist);
+        //추천 무드 로직 보류
+        // const result = (await myPlaylist.find({ userIdx: ID }))[0];
+        // let query = {
+        //     '_id': result.hitsPlaylist,
+        //     'songList.songStatus': 1
+        // }
+        // const result2 = (await history.find(query))[0];
 
-        const uploadSongs = await playlistModules.getSongList(myPlaylist.uploadPlaylist); // 업로드곡 리스트의 노래들
-        const waitSongList = new Array();
-        const passSongList = new Array();
-        const failSongList = new Array();
-        for(var i = 0 ; i < uploadSongs.length ; i++) { // 곡의 상태를 판별하여 곡정보를 담은 배열을 보내줌
-            if(uploadSongs[i].songStatus == 0) { // 유보 상태의 곡들
-                waitSongList.push(uploadSongs[i]);
-            }
-            else if(uploadSongs[i].songStatus == 1) { // 패스 상태의 곡들
-                passSongList.push(uploadSongs[i]);
-            }
-            else { // 실패 상태의 곡들
-                failSongList.push(uploadSongs[i]);
-            }
-        }
-        const playlistResult = {
-            "hitsSong" : (await playlistModules.getSongList(myPlaylist.hitsPlaylist)), // 적중곡 리스트의 노래들
-            "waitSong" : waitSongList,
-            "passSong" : passSongList,
-            "failSong" : failSongList
-        }
-        const selectScoreQuery = 'SELECT songIdx, ratePoint FROM rate_history WHERE userIdx = ?';
-        const selectScoreResult = await pool.queryParam_Arr(selectScoreQuery, [ID]);
-        const userScoreInfo = selectScoreResult;
-        console.log(userScoreInfo);
+        userInfo.recommendMode = "신나는";
+        res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.MYPAGE_SUCCESS, userInfo));
 
-        res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.MYPAGE_SUCCESS, {
-            "user 정보" : userInfo, 
-            "playlist 결과": playlistResult,
-            "user가 준 점수" : userScoreInfo}));
-
-    }else if(ID == -1) { //비회원일 경우
+    } else if (ID == -1) { //비회원일 경우
         res.status(200).send(responseUtil.successFalse(returnCode.NOT_FOUND, returnMessage.NOT_CORRECT_TOKEN_USER));
     }
     else { //토큰 검증 실패
@@ -66,18 +39,18 @@ router.get('/', async(req, res, next) => { // 마이페이지 조회
 });
 
 // 마이페이지 수정
-router.put('/', upload.fields([{name:'profileImg', maxCount:1}, {name:'backImg', maxCount:1}]), async(req, res, next) => { //마이페이지 수정
+router.put('/', upload.fields([{ name: 'profileImg', maxCount: 1 }, { name: 'backImg', maxCount: 1 }]), async (req, res, next) => { //마이페이지 수정
     const ID = await jwt.verify(req.headers.authorization);
     console.log(ID);
 
-    if(ID > 0) { //회원일 경우
+    if (ID > 0) { //회원일 경우
 
         //회원 기본정보 수정
         const profileImg = req.files.profileImg[0].location;
         const backImg = req.files.backImg[0].location;
         const updateUserQuery = 'UPDATE user SET nickname = ?, profileImg = ?, backImg = ?, comment = ? WHERE userIdx = ?';
         const updateUserResult = await pool.queryParam_Arr(updateUserQuery, [req.body.nickname, profileImg, backImg, req.body.comment, ID]);
-        
+
         if (!updateUserResult) {
             console.log('기본 정보 수정 실패');
             res.status(200).send(responseUtil.successFalse(returnCode.DB_ERROR, returnMessage.MYPAGE_EDIT_FAIL))
@@ -116,7 +89,7 @@ router.put('/', upload.fields([{name:'profileImg', maxCount:1}, {name:'backImg',
         const deleteUserArtistQuery = 'DELETE FROM user_originArtist WHERE userIdx = ?';
         const deleteUserArtistResult = await pool.queryParam_Arr(deleteUserArtistQuery, [ID]);
 
-        for (i = 0; i < artistLen; i++){
+        for (i = 0; i < artistLen; i++) {
             const insertUserArtistQuery = 'INSERT INTO user_originArtist (userIdx, originArtistIdx) VALUES (?,?)';
             const insertUserArtistResult = await pool.queryParam_Arr(insertUserArtistQuery, [ID, req.body.originArtist[i]]);
             if (!insertUserArtistResult) {
@@ -126,8 +99,8 @@ router.put('/', upload.fields([{name:'profileImg', maxCount:1}, {name:'backImg',
         }
         console.log('마이 페이지 수정 완료');
         res.status(200).send(responseUtil.successTrue(returnCode.OK, returnMessage.MYPAGE_EDIT_SUCCESS));
-    
-    }else if(ID == -1) { //비회원일 경우
+
+    } else if (ID == -1) { //비회원일 경우
         res.status(200).send(responseUtil.successFalse(returnCode.NOT_FOUND, returnMessage.NOT_CORRECT_TOKEN_USER));
     }
     else { //토큰 검증 실패

@@ -8,25 +8,13 @@ router.use('/', require('./controller/user/user_routes'));
 //mypage
 router.use('/', require('./controller/myPage/myPage_routes'));
 
-//home
-router.use('/', require('./controller/home/home_routes'));
-
-//schedule
-router.use('/', require('./controller/scheduler/scheduler_routes'));
-
-//default playlist
-router.use('/', require('./controller/defaultPlaylist/defaultPlaylist_routes'));
-
-//custom playlist
-router.use('/', require('./controller/customPlaylist/customPlaylist_routes'));
-
 //song
 router.use('/', require('./controller/songs/songs_routes'));
 
 //search
 router.use('/', require('./controller/search/search_routes'));
 
-//health-chekc
-router.use('/', require('./controller/health'))
+//health-check
+router.use('/health-check', require('./controller/health'))
 
 module.exports = router;

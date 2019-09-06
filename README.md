@@ -1,8 +1,22 @@
 # project_wave_server
 
+
+![wave.png](https://github.com/wave-lab/project-wave-scheduler-server/blob/master/img/wave.png?raw=true)
+
+
 * 2019 SOPT 24기 커버곡 플랫폼 'wave'
 * 프로젝트 기간 : 2019년 6월 29일 ~ 2019년 7월 12일]
 * **API** - (https://github.com/wave-lab/project-wave-server/wiki)
+
+
+
+![architecture.png](https://github.com/wave-lab/project-wave-scheduler-server/blob/master/img/architecture.png?raw=true)
+
+
+
+![erd.png](https://github.com/wave-lab/project-wave-scheduler-server/blob/master/img/erd.PNG?raw=true)
+
+
 
 ## 의존성
 

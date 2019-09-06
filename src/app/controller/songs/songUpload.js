@@ -10,8 +10,8 @@ const resUtil = require('../../module/responseUtil');
 const pool = require('../../module/pool');
 const song = require('../../model/schema/song');
 const genre = require('../../module/genre');
-const mood  = require('../../module/mood')
-
+const mood = require('../../module/mood')
+const playlistModules = require('../../module/playlistModules');
 
 const multiUpload = upload.fields([{
     name: 'songUrl'
@@ -26,21 +26,22 @@ router.post('/', multiUpload, async (req, res) => {
     //회원일 경우
     if (ID > 0) {
         const body = req.body;
-        const genreNameArray = new Array(body.genre.length);
+        const genreNameArray = new Array();
         for(var i = 0 ; i < body.genre.length ; i++) {
             genreNameArray[i] = genre[(body.genre)[i]];
         }
-        const moodNameArray = new Array(body.mood.length);
+        const moodNameArray = new Array();
         for(var i = 0 ; i < body.mood.length ; i++) {
             moodNameArray[i] = mood[(body.mood)[i]];
         }
         const artworkUrl = req.files.artwork[0].location;
         const songUrl = req.files.songUrl[0].location;
+
         const coverArtistNameQuery = 'SELECT nickname FROM user WHERE userIdx= ?';
         const coverArtistName = (await pool.queryParam_Arr(coverArtistNameQuery, [ID]))[0].nickname;
-        const originArtistIdxQuery = 'SELECT originArtistIdx FROM originArtist WHERE originArtistName=?';
-        
+        const originArtistIdxQuery = 'SELECT * FROM originArtist WHERE originArtistName=?';
         const insertNewOriginArtistQuery = 'INSERT INTO originArtist (originArtistName) VALUES (?)';
+
         const inputSongData = {
             originTitle: body.originTitle,
             userIdx: ID,
@@ -48,7 +49,7 @@ router.post('/', multiUpload, async (req, res) => {
             streamCount: 0,
             likeCount: 0,
             artwork: artworkUrl,
-            originArtistIdx: body.originArtistIdx,
+            originArtistIdx : null,
             originArtistName: body.originArtistName,
             enrollTime: null,
             songUrl: songUrl,
@@ -63,21 +64,27 @@ router.post('/', multiUpload, async (req, res) => {
             deleteTime: moment().add(7, 'days'),
             rateUserCount: 0
         }
+        const originArtistData = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]));
         if (body.originTitle == null || songUrl == undefined) {
-            console.log(err);
             res.status(200).send(resUtil.successFalse(returnCode.BAD_REQUEST, returnMessage.SONG_UPLOAD_FAIL))
-        } else if (body.originArtistIdx == null) {
+        } else if (originArtistData[0] == undefined) {
             await pool.queryParam_Arr(insertNewOriginArtistQuery, [body.originArtistName]);
+
             console.log('새 원곡가수 삽입 성공');
-            const originArtistIdx = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]))[0].originArtistIdx;
-            inputSongData.originArtistIdx = originArtistIdx;
+            const newData = (await pool.queryParam_Arr(originArtistIdxQuery, [body.originArtistName]));
+            inputSongData.originArtistIdx = newData[0].originArtistIdx;
+
             await song.create(inputSongData, async function (err, docs) {
-                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
+                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS, docs));
             })
-        } 
+        }
         else {
-            await song.create(inputSongData)
-            res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS));
+            inputSongData.originArtistIdx = originArtistData[0].originArtistIdx;
+            const uploadPlaylistIdx = (await playlistModules.getPlayList(ID, 'upload'))._id;
+            await song.create(inputSongData, async function(err, docs){
+                await playlistModules.addSongToPlaylist(uploadPlaylistIdx, docs._id)
+                res.status(200).send(resUtil.successTrue(returnCode.OK, returnMessage.SONG_UPLOAD_SUCCESS, docs));
+            })
         }
 
 

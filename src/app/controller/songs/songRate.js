@@ -38,16 +38,18 @@ router.post('/', async (req, res) => {
 
     //회원일 경우.
     if (ID > 0) {
-
+        console.log(songIdx);
         let result1 = await pool.queryParam_Arr(isRateHistory, [ID, songIdx]);
-
-        if (result1.length != 0) {
+        console.log(result1);
+        console.log(result1.length);
+        if (result1.length == 0) {
 
             let result2 = await song.find({ _id: songIdx });
 
             if (result2.length == 0) {
                 res.status(200).send(responseUtil.successFalse(returnCode.NOT_FOUND, "노래가 없습니다."));
-            } else {
+            } 
+            else {
 
                 let result3 = await song.update({ _id: songIdx }, {
                     $set: { rateScore: result2[0].rateScore + Number(rateScore), rateUserCount: result2[0].rateUserCount + 1 }
@@ -79,7 +81,8 @@ router.post('/', async (req, res) => {
                 res.status(200).send(responseUtil.successTrue(returnCode.CREATED, "평가 완료"));
 
             }
-        } else {
+        } 
+        else {
             res.status(200).send(responseUtil.successFalse(returnCode.NO_CONTENT, "이미 평가를 진행했습니다."));
         }
     }
