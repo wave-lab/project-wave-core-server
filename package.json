@@ -12,7 +12,7 @@
     "crypto-promise": "^2.1.0",
     "debug": "~2.6.9",
     "ejs": "^2.6.2",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "helmet": "^3.18.0",
     "http-errors": "^1.6.3",
     "jade": "~1.11.0",
